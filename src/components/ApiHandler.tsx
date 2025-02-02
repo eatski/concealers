@@ -54,49 +54,49 @@ function ApiHandler({
 
             {characters.map((character, index) => (
               <Card key={index}>
-                <CardContent>
-                  <Stack spacing={2}>
+                <CardContent sx={{ p: 4 }}>
+                  <Stack spacing={3}>
                     <Typography variant="h6">
                       キャラクター {index + 1}
                     </Typography>
 
                     <Box>
-                      <Typography variant="subtitle2" gutterBottom>
+                      <Typography variant="subtitle1" gutterBottom>
                         名前
                       </Typography>
-                      <Typography>
+                      <Typography variant="body1">
                         {character.name}
                       </Typography>
                     </Box>
 
                     <Box>
-                      <Typography variant="subtitle2" gutterBottom>
+                      <Typography variant="subtitle1" gutterBottom>
                         説明
                       </Typography>
-                      <Typography>
+                      <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                         {character.description}
                       </Typography>
                     </Box>
 
                     <Box>
-                      <Typography variant="subtitle2" gutterBottom>
+                      <Typography variant="subtitle1" gutterBottom>
                         隠しプロンプト
                       </Typography>
-                      <Typography>
+                      <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                         {character.hiddenPrompt}
                       </Typography>
                     </Box>
 
                     {data && data[index] && (
-                      <Paper sx={{ p: 2, bgcolor: 'grey.100' }}>
-                        <Stack spacing={1}>
-                          <Typography variant="subtitle2">
+                      <Paper sx={{ p: 3, bgcolor: 'grey.100' }}>
+                        <Stack spacing={2}>
+                          <Typography variant="subtitle1">
                             次の発言：
                           </Typography>
-                          <Typography>
+                          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                             {data[index].nextStatement}
                           </Typography>
-                          <Typography variant="subtitle2">
+                          <Typography variant="subtitle1">
                             発言への意欲：{data[index].urgency}/5
                           </Typography>
                         </Stack>
@@ -112,7 +112,7 @@ function ApiHandler({
               variant="contained"
               disabled={isMutating}
               fullWidth
-              sx={{ mt: 2 }}
+              sx={{ height: 56, mt: 2 }}
             >
               {isMutating ? (
                 <CircularProgress size={24} color="inherit" />

@@ -12,7 +12,6 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
-import { type Character } from '../shared'
 import { type GameStateProps } from './GameStateProvider'
 
 function SettingsForm({
@@ -40,8 +39,8 @@ function SettingsForm({
           <Stack spacing={3}>
             {characters.map((character, index) => (
               <Card key={index}>
-                <CardContent>
-                  <Stack spacing={2}>
+                <CardContent sx={{ p: 4 }}>
+                  <Stack spacing={3}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Typography variant="h6">
                         キャラクター {index + 1}
@@ -50,7 +49,6 @@ function SettingsForm({
                         onClick={() => onRemoveCharacter(index)}
                         disabled={characters.length === 1}
                         color="error"
-                        size="small"
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -72,7 +70,7 @@ function SettingsForm({
                       onChange={(e) => onCharacterChange(index, 'description', e.target.value)}
                       placeholder="キャラクターの説明"
                       multiline
-                      rows={3}
+                      rows={4}
                       variant="outlined"
                     />
 
@@ -83,7 +81,7 @@ function SettingsForm({
                       onChange={(e) => onCharacterChange(index, 'hiddenPrompt', e.target.value)}
                       placeholder="キャラクターの隠しプロンプト"
                       multiline
-                      rows={3}
+                      rows={4}
                       variant="outlined"
                     />
                   </Stack>
@@ -96,13 +94,14 @@ function SettingsForm({
               onClick={onAddCharacter}
               variant="outlined"
               fullWidth
+              sx={{ height: 56 }}
             >
               キャラクターを追加
             </Button>
 
             <Paper elevation={3}>
-              <Box sx={{ p: 2 }}>
-                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <Box sx={{ p: 4 }}>
+                <Stack direction="row" spacing={3}>
                   <TextField
                     fullWidth
                     type="password"
@@ -117,7 +116,7 @@ function SettingsForm({
                     disabled={!apiKey || characters.some(char => !char.name || !char.description || !char.hiddenPrompt)}
                     sx={{
                       height: '56px',
-                      minWidth: { xs: '100%', md: '200px' }
+                      minWidth: '200px'
                     }}
                   >
                     確認画面へ
