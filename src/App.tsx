@@ -1,55 +1,20 @@
 import { useState } from 'react'
-import { OpenAI, APIError } from 'openai'
 import useSWRMutation from 'swr/mutation'
+import { sendRequest } from './api/openai'
 
 function App() {
   const [apiKey, setApiKey] = useState('')
-  const [response, setResponse] = useState<string | null>(null)
 
-  async function sendRequest() {
-    if (!apiKey) return null
-    
-    const openai = new OpenAI({
-      apiKey: apiKey,
-      dangerouslyAllowBrowser: true
-    })
-
-    try {
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: 'こんにちは' }]
-      })
-
-      return completion.choices[0].message.content
-    } catch (error) {
-      console.error('Error:', error)
-      if (error instanceof APIError) {
-        if (error.status === 401) {
-          throw new Error('APIキーが無効です')
-        } else if (error.status === 429) {
-          throw new Error('リクエスト制限に達しました')
-        }
-      }
-      throw new Error('予期せぬエラーが発生しました')
-    }
-  }
-
-  const { trigger, isMutating, error } = useSWRMutation(
+  const { trigger, isMutating, error, data } = useSWRMutation<string | null>(
     'chat',
     async () => {
-      const result = await sendRequest()
+      const result = await sendRequest(apiKey)
       return result
-    },
-    {
-      onSuccess: (data) => {
-        setResponse(data)
-      }
     }
   )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setResponse(null)
     await trigger()
   }
 
@@ -69,7 +34,7 @@ function App() {
       
       {isMutating && <div>応答を待っています...</div>}
       {error && <div>{error.message}</div>}
-      {response && <div>{response}</div>}
+      {data && <div>{data}</div>}
     </div>
   )
 }
