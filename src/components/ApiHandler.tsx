@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { createCharacterThoughts, type CharacterThought } from '../api/analyzeCharacterThoughts'
+import { createCharacterSpeech, type CharacterSpeech } from '../api/createCharacterSpeech'
 import { type GameStateProps } from './GameStateProvider'
 
 function ApiHandler({
@@ -20,9 +21,23 @@ function ApiHandler({
   characters,
   onModeChange
 }: GameStateProps) {
-  const { trigger, isMutating, error, data } = useSWRMutation<CharacterThought[]>(
+  interface ApiResponse {
+    thoughts: CharacterThought[]
+    speech: CharacterSpeech | null
+  }
+
+  const {
+    trigger,
+    isMutating,
+    error,
+    data
+  } = useSWRMutation<ApiResponse>(
     'chat',
-    () => createCharacterThoughts(apiKey, characters)
+    async () => {
+      const thoughts = await createCharacterThoughts(apiKey, characters)
+      const speech = await createCharacterSpeech(apiKey, characters, thoughts)
+      return { thoughts, speech }
+    }
   )
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,34 +107,54 @@ function ApiHandler({
             ))}
 
             {data && (
-              <Box sx={{ mt: 4 }}>
-                <Typography variant="h5" gutterBottom>
-                  会話ログ
-                </Typography>
-                <Stack spacing={2}>
-                  {data.map((response, index) => (
-                    <Paper key={index} sx={{ p: 3, bgcolor: 'grey.50' }}>
+              <>
+                <Box sx={{ mt: 4 }}>
+                  <Typography variant="h5" gutterBottom>
+                    キャラクターの思考
+                  </Typography>
+                  <Stack spacing={2}>
+                    {data.thoughts.map((response, index) => (
+                      <Paper key={index} sx={{ p: 3, bgcolor: 'grey.50' }}>
+                        <Stack spacing={2}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="h6" color="primary">
+                              {characters[index].name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              発言への意欲：{
+                                response.urgency === 1 ? '1 (聞き手)' :
+                                response.urgency === 2 ? '2 (普通)' :
+                                '3 (積極的)'
+                              }
+                            </Typography>
+                          </Box>
+                          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                            {response.thought}
+                          </Typography>
+                        </Stack>
+                      </Paper>
+                    ))}
+                  </Stack>
+                </Box>
+
+                {data.speech && (
+                  <Box sx={{ mt: 4 }}>
+                    <Typography variant="h5" gutterBottom>
+                      発言
+                    </Typography>
+                    <Paper sx={{ p: 3, bgcolor: 'primary.light' }}>
                       <Stack spacing={2}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography variant="h6" color="primary">
-                            {characters[index].name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            発言への意欲：{
-                              response.urgency === 1 ? '1 (聞き手)' :
-                              response.urgency === 2 ? '2 (普通)' :
-                              '3 (積極的)'
-                            }
-                          </Typography>
-                        </Box>
-                        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                          {response.thought}
+                        <Typography variant="h6" color="white">
+                          {data.speech.character.name}
+                        </Typography>
+                        <Typography variant="body1" color="white" sx={{ whiteSpace: 'pre-wrap' }}>
+                          {data.speech.speech}
                         </Typography>
                       </Stack>
                     </Paper>
-                  ))}
-                </Stack>
-              </Box>
+                  </Box>
+                )}
+              </>
             )}
 
             <Button
