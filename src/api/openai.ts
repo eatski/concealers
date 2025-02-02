@@ -1,10 +1,6 @@
 import { OpenAI, APIError } from 'openai'
 
-interface Character {
-  name: string
-  description: string
-  hiddenPrompt: string
-}
+import type { Character } from '../shared'
 
 export interface CharacterResponse {
   nextStatement: string
