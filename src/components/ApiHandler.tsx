@@ -105,7 +105,11 @@ function ApiHandler({
                             {characters[index].name}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
-                            発言への意欲：{response.urgency}/5
+                            発言への意欲：{
+                              response.urgency === 1 ? '1 (聞き手)' :
+                              response.urgency === 2 ? '2 (普通)' :
+                              '3 (積極的)'
+                            }
                           </Typography>
                         </Box>
                         <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>

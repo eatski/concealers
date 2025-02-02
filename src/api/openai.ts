@@ -4,7 +4,7 @@ import type { Character } from '../shared'
 
 export interface CharacterResponse {
   nextStatement: string
-  urgency: number
+  urgency: 1 | 2 | 3
 }
 
 function generatePromptForCharacter(currentCharacter: Character, allCharacters: Character[]) {
@@ -66,9 +66,9 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
                   },
                   urgency: {
                     type: 'integer',
-                    description: '発言への意欲（1: 消極的, 5: 積極的）',
+                    description: '発言への意欲（1: 特に話すことがない・誰かが話すのを聞きたい, 2: 強い意欲があるわけではないが話すことがある, 3: 積極的に話したい）',
                     minimum: 1,
-                    maximum: 5
+                    maximum: 3
                   }
                 },
                 required: ['nextStatement', 'urgency']
