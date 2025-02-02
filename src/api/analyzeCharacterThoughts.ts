@@ -16,21 +16,6 @@ function createCharacterAnalysisPrompt(
 ) {
   const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
   
-  const historyText = history.length > 0
-    ? `
-これまでの会話:
-${history.map((routine, index) => `
-ルーチン${index + 1}:
-${routine.thoughts
-  .filter(thought => thought.characterName === currentCharacter.name)
-  .map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
-${routine.speech
-  ? `${routine.speech.characterName}の発言: ${routine.speech.speech}`
-  : '発言なし'}`
-).join('\n')}
-`
-    : ''
-
   return `
 あなたは「${currentCharacter.name}」というキャラクターです。
 
@@ -44,7 +29,19 @@ ${otherCharacters.map(char => `
 名前: ${char.name}
 説明: ${char.description}
 `).join('\n')}
-${historyText}
+${history.length > 0
+  ? `
+これまでの会話:
+${history.map((routine) => `
+${routine.thoughts
+.filter(thought => thought.characterName === currentCharacter.name)
+.map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
+${routine.speech
+? `${routine.speech.characterName}の発言: 「${routine.speech.speech}」`
+: '発言なし'}`
+).join('\n')}
+`
+  : ''}
 この状況で、あなたが考えていることと、どの程度話したい気持ちがあるか教えてください。
 `.trim()
 }
@@ -67,11 +64,11 @@ export async function createCharacterThoughts(
         const prompt = createCharacterAnalysisPrompt(character, characters, history)
         
         const completion = await openai.chat.completions.create({
-          model: 'gpt-4',
+          model: "gpt-4o",
           messages: [
             { 
               role: 'system',
-              content: 'あなたの現在の心情と発言意欲を回答してください。'
+              content: 'あなたの現在の心情と発言意欲を回答してください。過去あなたの発言が多い場合は発言意欲は低めにしてください。'
             },
             { 
               role: 'user', 
@@ -91,7 +88,7 @@ export async function createCharacterThoughts(
                   },
                   urgency: {
                     type: 'integer',
-                    description: '発言への意欲（1: 特に話すことがない・誰かが話すのを聞きたい, 2: 強い意欲があるわけではないが話すことがある, 3: 積極的に話したい）',
+                    description: '発言への意欲（1: 特に話すことがない・誰かが話すのを聞きたい, 2: 強い意欲があるわけではないが話すことがある, 3: 積極的に話したい・話す責務がある）',
                     minimum: 1,
                     maximum: 3
                   }

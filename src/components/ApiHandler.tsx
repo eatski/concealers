@@ -180,10 +180,6 @@ function ApiHandler({
                       {history.map((routine, index) => (
                         <Paper key={index} sx={{ p: 3 }}>
                           <Stack spacing={3}>
-                            <Typography variant="h6" color="text.secondary">
-                              ルーチン {history.length - index}
-                            </Typography>
-                            
                             <Box>
                               <Typography variant="subtitle1" gutterBottom>
                                 各キャラクターの思考

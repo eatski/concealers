@@ -29,21 +29,6 @@ function createSpeechPrompt(
   history: RoutineResult[]
 ) {
   const otherCharacters = allCharacters.filter(char => char.name !== speakingCharacter.character.name)
-  
-  const historyText = history.length > 0
-    ? `
-これまでの会話:
-${history.map((routine, index) => `
-ルーチン${index + 1}:
-${routine.thoughts
-  .filter(thought => thought.characterName === speakingCharacter.character.name)
-  .map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
-${routine.speech
-  ? `${routine.speech.characterName}の発言: ${routine.speech.speech}`
-  : '発言なし'}`
-).join('\n')}
-`
-    : ''
 
   return `
 あなたは「${speakingCharacter.character.name}」というキャラクターです。
@@ -52,14 +37,25 @@ ${routine.speech
 名前: ${speakingCharacter.character.name}
 説明: ${speakingCharacter.character.description}
 隠された情報: ${speakingCharacter.character.hiddenPrompt}
-現在の考え: ${speakingCharacter.thought.thought}
 
 他のキャラクター:
 ${otherCharacters.map(char => `
 名前: ${char.name}
 説明: ${char.description}
 `).join('\n')}
-${historyText}
+${history.length > 0
+  ? `
+これまでの会話:
+${history.map((routine) => `
+${routine.thoughts
+.filter(thought => thought.characterName === speakingCharacter.character.name)
+.map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
+${routine.speech
+? `${routine.speech.characterName}の発言: 「${routine.speech.speech}」`
+: '発言なし'}`
+).join('\n')}
+`
+  : ''}
 この状況で、あなたはどのように発言しますか？
 `.trim()
 }
@@ -91,7 +87,7 @@ export async function createCharacterSpeech(
     const prompt = createSpeechPrompt(speakingCharacter, characters, history)
     
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: "gpt-4o",
       messages: [
         { 
           role: 'system',
