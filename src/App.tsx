@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import useSWRMutation from 'swr/mutation'
-import { sendRequest } from './api/openai'
+import { sendRequest, type CharacterResponse } from './api/openai'
 import {
   Container,
   Box,
@@ -30,12 +30,9 @@ function App() {
     { name: '', description: '', hiddenPrompt: '' }
   ])
 
-  const { trigger, isMutating, error, data } = useSWRMutation<string | null>(
+  const { trigger, isMutating, error, data } = useSWRMutation<CharacterResponse[]>(
     'chat',
-    async () => {
-      const result = await sendRequest(apiKey, characters)
-      return result
-    }
+    () => sendRequest(apiKey, characters)
   )
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,6 +117,22 @@ function App() {
                       rows={3}
                       variant="outlined"
                     />
+
+                    {data && data[index] && (
+                      <Paper sx={{ p: 2, bgcolor: 'grey.100' }}>
+                        <Stack spacing={1}>
+                          <Typography variant="subtitle2">
+                            次の発言：
+                          </Typography>
+                          <Typography>
+                            {data[index].nextStatement}
+                          </Typography>
+                          <Typography variant="subtitle2">
+                            発言への意欲：{data[index].urgency}/5
+                          </Typography>
+                        </Stack>
+                      </Paper>
+                    )}
                   </Stack>
                 </CardContent>
               </Card>
@@ -175,11 +188,6 @@ function App() {
           {error && (
             <Alert severity="error">
               {error.message}
-            </Alert>
-          )}
-          {data && (
-            <Alert severity="success">
-              {data}
             </Alert>
           )}
         </Stack>
