@@ -12,7 +12,7 @@ import {
   Stack
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { sendRequest, type CharacterResponse } from '../api/openai'
+import { analyzeCharacterThoughts, type CharacterThoughtAnalysis } from '../api/analyzeCharacterThoughts'
 import { type GameStateProps } from './GameStateProvider'
 
 function ApiHandler({
@@ -20,9 +20,9 @@ function ApiHandler({
   characters,
   onModeChange
 }: GameStateProps) {
-  const { trigger, isMutating, error, data } = useSWRMutation<CharacterResponse[]>(
+  const { trigger, isMutating, error, data } = useSWRMutation<CharacterThoughtAnalysis[]>(
     'chat',
-    () => sendRequest(apiKey, characters)
+    () => analyzeCharacterThoughts(apiKey, characters)
   )
 
   const handleSubmit = async (e: React.FormEvent) => {

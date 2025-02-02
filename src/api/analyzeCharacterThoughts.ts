@@ -2,12 +2,12 @@ import { OpenAI, APIError } from 'openai'
 
 import type { Character } from '../shared'
 
-export interface CharacterResponse {
+export interface CharacterThoughtAnalysis {
   thought: string
   urgency: 1 | 2 | 3
 }
 
-function generatePromptForCharacter(currentCharacter: Character, allCharacters: Character[]) {
+function createCharacterAnalysisPrompt(currentCharacter: Character, allCharacters: Character[]) {
   const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
   
   return `
@@ -28,7 +28,7 @@ ${otherCharacters.map(char => `
 `.trim()
 }
 
-export async function sendRequest(apiKey: string, characters: Character[]): Promise<CharacterResponse[]> {
+export async function analyzeCharacterThoughts(apiKey: string, characters: Character[]): Promise<CharacterThoughtAnalysis[]> {
   if (!apiKey) return []
   
   const openai = new OpenAI({
@@ -39,7 +39,7 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
   try {
     const responses = await Promise.all(
       characters.map(async (character) => {
-        const prompt = generatePromptForCharacter(character, characters)
+        const prompt = createCharacterAnalysisPrompt(character, characters)
         
         const completion = await openai.chat.completions.create({
           model: 'gpt-4',
@@ -55,7 +55,7 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
           ],
           functions: [
             {
-              name: 'thoughts',
+              name: 'analyzeThoughtAndUrgency',
               description: 'キャラクターの考えと発言意欲を分析する',
               parameters: {
                 type: 'object',
@@ -75,7 +75,7 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
               }
             }
           ],
-          function_call: { name: 'thoughts' }
+          function_call: { name: 'analyzeThoughtAndUrgency' }
         })
 
         const functionCall = completion.choices[0].message.function_call
@@ -84,7 +84,7 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
         }
 
         try {
-          const response = JSON.parse(functionCall.arguments) as CharacterResponse
+          const response = JSON.parse(functionCall.arguments) as CharacterThoughtAnalysis
           return response
         } catch (e) {
           console.error('JSON解析エラー:', e)
