@@ -1,5 +1,5 @@
 import { OpenAI, APIError } from 'openai'
-import type { Character } from '../shared'
+import type { Character, RoutineResult } from '../shared'
 import type { CharacterThought } from './analyzeCharacterThoughts'
 
 interface CharacterWithThought {
@@ -23,9 +23,28 @@ function selectSpeakingCharacter(charactersWithThoughts: CharacterWithThought[])
   return highestUrgencyCharacters[Math.floor(Math.random() * highestUrgencyCharacters.length)]
 }
 
-function createSpeechPrompt(speakingCharacter: CharacterWithThought, allCharacters: Character[]) {
+function createSpeechPrompt(
+  speakingCharacter: CharacterWithThought,
+  allCharacters: Character[],
+  history: RoutineResult[]
+) {
   const otherCharacters = allCharacters.filter(char => char.name !== speakingCharacter.character.name)
   
+  const historyText = history.length > 0
+    ? `
+これまでの会話:
+${history.map((routine, index) => `
+ルーチン${index + 1}:
+${routine.thoughts
+  .filter(thought => thought.characterName === speakingCharacter.character.name)
+  .map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
+${routine.speech
+  ? `${routine.speech.characterName}の発言: ${routine.speech.speech}`
+  : '発言なし'}`
+).join('\n')}
+`
+    : ''
+
   return `
 あなたは「${speakingCharacter.character.name}」というキャラクターです。
 
@@ -40,15 +59,16 @@ ${otherCharacters.map(char => `
 名前: ${char.name}
 説明: ${char.description}
 `).join('\n')}
-
+${historyText}
 この状況で、あなたはどのように発言しますか？
 `.trim()
 }
 
 export async function createCharacterSpeech(
-  apiKey: string, 
-  characters: Character[], 
-  thoughts: CharacterThought[]
+  apiKey: string,
+  characters: Character[],
+  thoughts: CharacterThought[],
+  history: RoutineResult[]
 ): Promise<CharacterSpeech | null> {
   if (!apiKey || characters.length === 0 || thoughts.length === 0) return null
 
@@ -68,7 +88,7 @@ export async function createCharacterSpeech(
   })
 
   try {
-    const prompt = createSpeechPrompt(speakingCharacter, characters)
+    const prompt = createSpeechPrompt(speakingCharacter, characters, history)
     
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',

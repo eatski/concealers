@@ -5,3 +5,15 @@ export interface Character {
   description: string
   hiddenPrompt: string
 }
+
+export interface RoutineResult {
+  thoughts: Array<{
+    characterName: string
+    thought: string
+    urgency: 1 | 2 | 3
+  }>
+  speech: {
+    characterName: string
+    speech: string
+  } | null
+}

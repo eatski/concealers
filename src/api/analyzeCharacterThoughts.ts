@@ -7,9 +7,30 @@ export interface CharacterThought {
   urgency: 1 | 2 | 3
 }
 
-function createCharacterAnalysisPrompt(currentCharacter: Character, allCharacters: Character[]) {
+import { type RoutineResult } from '../shared'
+
+function createCharacterAnalysisPrompt(
+  currentCharacter: Character,
+  allCharacters: Character[],
+  history: RoutineResult[]
+) {
   const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
   
+  const historyText = history.length > 0
+    ? `
+これまでの会話:
+${history.map((routine, index) => `
+ルーチン${index + 1}:
+${routine.thoughts
+  .filter(thought => thought.characterName === currentCharacter.name)
+  .map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
+${routine.speech
+  ? `${routine.speech.characterName}の発言: ${routine.speech.speech}`
+  : '発言なし'}`
+).join('\n')}
+`
+    : ''
+
   return `
 あなたは「${currentCharacter.name}」というキャラクターです。
 
@@ -23,12 +44,16 @@ ${otherCharacters.map(char => `
 名前: ${char.name}
 説明: ${char.description}
 `).join('\n')}
-
+${historyText}
 この状況で、あなたが考えていることと、どの程度話したい気持ちがあるか教えてください。
 `.trim()
 }
 
-export async function createCharacterThoughts(apiKey: string, characters: Character[]): Promise<CharacterThought[]> {
+export async function createCharacterThoughts(
+  apiKey: string,
+  characters: Character[],
+  history: RoutineResult[]
+): Promise<CharacterThought[]> {
   if (!apiKey) return []
   
   const openai = new OpenAI({
@@ -39,7 +64,7 @@ export async function createCharacterThoughts(apiKey: string, characters: Charac
   try {
     const responses = await Promise.all(
       characters.map(async (character) => {
-        const prompt = createCharacterAnalysisPrompt(character, characters)
+        const prompt = createCharacterAnalysisPrompt(character, characters, history)
         
         const completion = await openai.chat.completions.create({
           model: 'gpt-4',
