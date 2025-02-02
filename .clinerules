@@ -1,7 +1,40 @@
 # Cline Rules
 
+## ルール
+このファイルは実態と乖離しないようにしてください
+
 ## 最終的に作りたいもの
 
 複数人のエージェントが自分だけの秘密を隠しながら各人とやり取りし、謎を解き明かす正体隠匿系TRPGのテスターを作りたいです。
 
+## ファイル構成
 
+```
+src/
+├── App.tsx                    # メインアプリケーションコンポーネント
+├── components/               
+│   ├── GameStateProvider.tsx  # 状態管理を担当する親コンポーネント
+│   ├── SettingsForm.tsx      # 入力フォームのUIコンポーネント
+│   └── ApiHandler.tsx        # API通信と確認画面のUIコンポーネント
+├── api/
+│   └── openai.ts             # OpenAI APIとの通信を担当
+├── shared.ts                 # 共有の型定義
+└── main.tsx                  # アプリケーションのエントリーポイント
+```
+
+### コンポーネントの責務
+
+1. GameStateProvider
+   - mode, apiKey, charactersの状態管理
+   - 状態更新のためのハンドラー関数
+   - 子コンポーネントへのprops受け渡し
+
+2. SettingsForm
+   - 入力モードのUI表示
+   - キャラクター情報の入力フォーム
+   - APIキー入力フォーム
+
+3. ApiHandler
+   - API通信の処理（useSWRMutation）
+   - 確認モードのUI表示
+   - APIレスポンスの表示
