@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "openai": "^4.82.0",
+    "openapi": "^1.0.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "swr": "^2.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
