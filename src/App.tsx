@@ -1,6 +1,22 @@
 import { useState } from 'react'
 import useSWRMutation from 'swr/mutation'
 import { sendRequest } from './api/openai'
+import {
+  Container,
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
+  IconButton,
+  CircularProgress,
+  Alert,
+  Paper,
+  Stack
+} from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import AddIcon from '@mui/icons-material/Add'
 
 interface Character {
   name: string
@@ -48,82 +64,127 @@ function App() {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          {characters.map((character, index) => (
-            <div key={index}>
-              <div>
-                <h3>キャラクター {index + 1}</h3>
-                <button
-                  type="button"
-                  onClick={() => removeCharacter(index)}
-                  disabled={characters.length === 1}
-                >
-                  削除
-                </button>
-              </div>
+    <Container maxWidth="md">
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom align="center">
+          正体隠匿系TRPGテスター
+        </Typography>
 
-              <div>
-                <label>名前</label>
-                <input
-                  type="text"
-                  value={character.name}
-                  onChange={(e) => handleCharacterChange(index, 'name', e.target.value)}
-                  placeholder="キャラクターの名前"
-                />
-              </div>
+        <form onSubmit={handleSubmit}>
+          <Stack spacing={3}>
+            {characters.map((character, index) => (
+              <Card key={index}>
+                <CardContent>
+                  <Stack spacing={2}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="h6">
+                        キャラクター {index + 1}
+                      </Typography>
+                      <IconButton
+                        onClick={() => removeCharacter(index)}
+                        disabled={characters.length === 1}
+                        color="error"
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
 
-              <div>
-                <label>説明</label>
-                <textarea
-                  value={character.description}
-                  onChange={(e) => handleCharacterChange(index, 'description', e.target.value)}
-                  placeholder="キャラクターの説明"
-                  rows={3}
-                />
-              </div>
+                    <TextField
+                      fullWidth
+                      label="名前"
+                      value={character.name}
+                      onChange={(e) => handleCharacterChange(index, 'name', e.target.value)}
+                      placeholder="キャラクターの名前"
+                      variant="outlined"
+                    />
 
-              <div>
-                <label>隠しプロンプト</label>
-                <textarea
-                  value={character.hiddenPrompt}
-                  onChange={(e) => handleCharacterChange(index, 'hiddenPrompt', e.target.value)}
-                  placeholder="キャラクターの隠しプロンプト"
-                  rows={3}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+                    <TextField
+                      fullWidth
+                      label="説明"
+                      value={character.description}
+                      onChange={(e) => handleCharacterChange(index, 'description', e.target.value)}
+                      placeholder="キャラクターの説明"
+                      multiline
+                      rows={3}
+                      variant="outlined"
+                    />
 
-        <button
-          type="button"
-          onClick={addCharacter}
-        >
-          キャラクターを追加
-        </button>
+                    <TextField
+                      fullWidth
+                      label="隠しプロンプト"
+                      value={character.hiddenPrompt}
+                      onChange={(e) => handleCharacterChange(index, 'hiddenPrompt', e.target.value)}
+                      placeholder="キャラクターの隠しプロンプト"
+                      multiline
+                      rows={3}
+                      variant="outlined"
+                    />
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))}
 
-        <div>
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="OpenAI APIキーを入力"
-          />
-          <button
-            type="submit"
-            disabled={!apiKey || isMutating}
-          >
-            {isMutating ? '送信中...' : '送信'}
-          </button>
-        </div>
-      </form>
-      
-      {isMutating && <div>応答を待っています...</div>}
-      {error && <div>{error.message}</div>}
-      {data && <div>{data}</div>}
-    </div>
+            <Button
+              startIcon={<AddIcon />}
+              onClick={addCharacter}
+              variant="outlined"
+              fullWidth
+            >
+              キャラクターを追加
+            </Button>
+
+            <Paper elevation={3}>
+              <Box sx={{ p: 2 }}>
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                  <TextField
+                    fullWidth
+                    type="password"
+                    label="OpenAI APIキー"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    variant="outlined"
+                  />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={!apiKey || isMutating}
+                    sx={{ 
+                      height: '56px',
+                      minWidth: { xs: '100%', md: '200px' }
+                    }}
+                  >
+                    {isMutating ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      '送信'
+                    )}
+                  </Button>
+                </Stack>
+              </Box>
+            </Paper>
+          </Stack>
+        </form>
+
+        <Stack spacing={2} sx={{ mt: 3 }}>
+          {isMutating && (
+            <Alert severity="info">
+              応答を待っています...
+            </Alert>
+          )}
+          {error && (
+            <Alert severity="error">
+              {error.message}
+            </Alert>
+          )}
+          {data && (
+            <Alert severity="success">
+              {data}
+            </Alert>
+          )}
+        </Stack>
+      </Box>
+    </Container>
   )
 }
 
