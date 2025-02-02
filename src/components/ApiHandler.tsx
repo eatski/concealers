@@ -86,26 +86,37 @@ function ApiHandler({
                         {character.hiddenPrompt}
                       </Typography>
                     </Box>
-
-                    {data && data[index] && (
-                      <Paper sx={{ p: 3, bgcolor: 'grey.100' }}>
-                        <Stack spacing={2}>
-                          <Typography variant="subtitle1">
-                            次の発言：
-                          </Typography>
-                          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                            {data[index].nextStatement}
-                          </Typography>
-                          <Typography variant="subtitle1">
-                            発言への意欲：{data[index].urgency}/5
-                          </Typography>
-                        </Stack>
-                      </Paper>
-                    )}
                   </Stack>
                 </CardContent>
               </Card>
             ))}
+
+            {data && (
+              <Box sx={{ mt: 4 }}>
+                <Typography variant="h5" gutterBottom>
+                  会話ログ
+                </Typography>
+                <Stack spacing={2}>
+                  {data.map((response, index) => (
+                    <Paper key={index} sx={{ p: 3, bgcolor: 'grey.50' }}>
+                      <Stack spacing={2}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography variant="h6" color="primary">
+                            {characters[index].name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            発言への意欲：{response.urgency}/5
+                          </Typography>
+                        </Box>
+                        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                          {response.nextStatement}
+                        </Typography>
+                      </Stack>
+                    </Paper>
+                  ))}
+                </Stack>
+              </Box>
+            )}
 
             <Button
               type="submit"
