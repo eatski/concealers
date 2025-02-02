@@ -51,15 +51,6 @@ function App() {
     <div>
       <form onSubmit={handleSubmit}>
         <div>
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="OpenAI APIキーを入力"
-          />
-        </div>
-
-        <div>
           {characters.map((character, index) => (
             <div key={index}>
               <div>
@@ -113,12 +104,20 @@ function App() {
           キャラクターを追加
         </button>
 
-        <button
-          type="submit"
-          disabled={!apiKey || isMutating}
-        >
-          {isMutating ? '送信中...' : '送信'}
-        </button>
+        <div>
+          <input
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="OpenAI APIキーを入力"
+          />
+          <button
+            type="submit"
+            disabled={!apiKey || isMutating}
+          >
+            {isMutating ? '送信中...' : '送信'}
+          </button>
+        </div>
       </form>
       
       {isMutating && <div>応答を待っています...</div>}
