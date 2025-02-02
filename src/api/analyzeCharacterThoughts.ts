@@ -2,7 +2,7 @@ import { OpenAI, APIError } from 'openai'
 
 import type { Character } from '../shared'
 
-export interface CharacterThoughtAnalysis {
+export interface CharacterThought {
   thought: string
   urgency: 1 | 2 | 3
 }
@@ -28,7 +28,7 @@ ${otherCharacters.map(char => `
 `.trim()
 }
 
-export async function analyzeCharacterThoughts(apiKey: string, characters: Character[]): Promise<CharacterThoughtAnalysis[]> {
+export async function createCharacterThoughts(apiKey: string, characters: Character[]): Promise<CharacterThought[]> {
   if (!apiKey) return []
   
   const openai = new OpenAI({
@@ -46,7 +46,7 @@ export async function analyzeCharacterThoughts(apiKey: string, characters: Chara
           messages: [
             { 
               role: 'system',
-              content: 'キャラクターの現在の心情と発言意欲を分析して回答してください。'
+              content: 'あなたの現在の心情と発言意欲を回答してください。'
             },
             { 
               role: 'user', 
@@ -56,7 +56,7 @@ export async function analyzeCharacterThoughts(apiKey: string, characters: Chara
           functions: [
             {
               name: 'analyzeThoughtAndUrgency',
-              description: 'キャラクターの考えと発言意欲を分析する',
+              description: 'キャラクターの考えと発言意欲',
               parameters: {
                 type: 'object',
                 properties: {
@@ -84,7 +84,7 @@ export async function analyzeCharacterThoughts(apiKey: string, characters: Chara
         }
 
         try {
-          const response = JSON.parse(functionCall.arguments) as CharacterThoughtAnalysis
+          const response = JSON.parse(functionCall.arguments) as CharacterThought
           return response
         } catch (e) {
           console.error('JSON解析エラー:', e)
