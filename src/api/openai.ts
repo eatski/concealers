@@ -3,7 +3,7 @@ import { OpenAI, APIError } from 'openai'
 import type { Character } from '../shared'
 
 export interface CharacterResponse {
-  nextStatement: string
+  thought: string
   urgency: 1 | 2 | 3
 }
 
@@ -24,7 +24,7 @@ ${otherCharacters.map(char => `
 説明: ${char.description}
 `).join('\n')}
 
-この状況で、あなたが次に発言したいことを決定してください。
+この状況で、あなたが考えていることと、どの程度話したい気持ちがあるか教えてください。
 `.trim()
 }
 
@@ -45,8 +45,8 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
           model: 'gpt-4',
           messages: [
             { 
-              role: 'system', 
-              content: 'キャラクターの次の発言を決定し、関数を呼び出して回答してください。' 
+              role: 'system',
+              content: 'キャラクターの現在の心情と発言意欲を分析して回答してください。'
             },
             { 
               role: 'user', 
@@ -55,14 +55,14 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
           ],
           functions: [
             {
-              name: 'decideNextStatement',
-              description: 'キャラクターの次の発言を決定する',
+              name: 'thoughts',
+              description: 'キャラクターの考えと発言意欲を分析する',
               parameters: {
                 type: 'object',
                 properties: {
-                  nextStatement: {
+                  thought: {
                     type: 'string',
-                    description: '次に発言しようとしていることを100文字程度で説明'
+                    description: '現在考えていることを100文字程度で説明'
                   },
                   urgency: {
                     type: 'integer',
@@ -71,11 +71,11 @@ export async function sendRequest(apiKey: string, characters: Character[]): Prom
                     maximum: 3
                   }
                 },
-                required: ['nextStatement', 'urgency']
+                required: ['thought', 'urgency']
               }
             }
           ],
-          function_call: { name: 'decideNextStatement' }
+          function_call: { name: 'thoughts' }
         })
 
         const functionCall = completion.choices[0].message.function_call

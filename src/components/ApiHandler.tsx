@@ -113,7 +113,7 @@ function ApiHandler({
                           </Typography>
                         </Box>
                         <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                          {response.nextStatement}
+                          {response.thought}
                         </Typography>
                       </Stack>
                     </Paper>
