@@ -26,42 +26,46 @@ function selectSpeakingCharacter(charactersWithThoughts: CharacterWithThought[])
 function createSpeechPrompt(
   speakingCharacter: CharacterWithThought,
   allCharacters: Character[],
+  commonPrompt: string,
   history: RoutineResult[]
 ) {
   const otherCharacters = allCharacters.filter(char => char.name !== speakingCharacter.character.name)
 
   return `
-あなたは「${speakingCharacter.character.name}」というキャラクターです。
-
-あなたの情報:
+<共通の情報>
+${commonPrompt}
+</共通の情報>
+<あなたの情報>
 名前: ${speakingCharacter.character.name}
 説明: ${speakingCharacter.character.description}
-隠された情報: ${speakingCharacter.character.hiddenPrompt}
-
-他のキャラクター:
+隠している情報: ${speakingCharacter.character.hiddenPrompt}
+</あなたの情報>
+<他のキャラクター>
 ${otherCharacters.map(char => `
 名前: ${char.name}
 説明: ${char.description}
 `).join('\n')}
 ${history.length > 0
   ? `
-これまでの会話:
+</他のキャラクター>
+<これまでの会話>
 ${history.map((routine) => `
 ${routine.thoughts
 .filter(thought => thought.characterName === speakingCharacter.character.name)
 .map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
 ${routine.speech
-? `${routine.speech.characterName}の発言: 「${routine.speech.speech}」`
+? `${routine.speech.characterName === speakingCharacter.character.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
 : '発言なし'}`
 ).join('\n')}
 `
   : ''}
-この状況で、あなたはどのように発言しますか？
+</これまでの会話>
 `.trim()
 }
 
 export async function createCharacterSpeech(
   apiKey: string,
+  commonPrompt: string,
   characters: Character[],
   thoughts: CharacterThought[],
   history: RoutineResult[]
@@ -84,7 +88,7 @@ export async function createCharacterSpeech(
   })
 
   try {
-    const prompt = createSpeechPrompt(speakingCharacter, characters, history)
+    const prompt = createSpeechPrompt(speakingCharacter, characters, commonPrompt, history)
     
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",

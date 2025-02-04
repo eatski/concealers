@@ -6,6 +6,11 @@ export interface Character {
   hiddenPrompt: string
 }
 
+export interface GameSettings {
+  commonPrompt: string
+  characters: Character[]
+}
+
 export interface RoutineResult {
   thoughts: Array<{
     characterName: string

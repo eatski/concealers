@@ -16,11 +16,13 @@ import { type GameStateProps } from './GameStateProvider'
 
 function SettingsForm({
   apiKey,
+  commonPrompt,
   characters,
   onCharacterChange,
   onAddCharacter,
   onRemoveCharacter,
   onApiKeyChange,
+  onCommonPromptChange,
   onModeChange
 }: GameStateProps) {
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,6 +39,21 @@ function SettingsForm({
 
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
+            <Card>
+              <CardContent sx={{ p: 4 }}>
+                <TextField
+                  fullWidth
+                  label="共通の情報"
+                  value={commonPrompt}
+                  onChange={(e) => onCommonPromptChange(e.target.value)}
+                  placeholder="全キャラクターが知っている共通の情報"
+                  multiline
+                  rows={4}
+                  variant="outlined"
+                />
+              </CardContent>
+            </Card>
+
             {characters.map((character, index) => (
               <Card key={index}>
                 <CardContent sx={{ p: 4 }}>
@@ -113,7 +130,11 @@ function SettingsForm({
                   <Button
                     type="submit"
                     variant="contained"
-                    disabled={!apiKey || characters.some(char => !char.name || !char.description || !char.hiddenPrompt)}
+                    disabled={
+                      !apiKey || 
+                      !commonPrompt ||
+                      characters.some(char => !char.name || !char.description || !char.hiddenPrompt)
+                    }
                     sx={{
                       height: '56px',
                       minWidth: '200px'

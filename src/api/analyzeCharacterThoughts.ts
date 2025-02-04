@@ -12,42 +12,46 @@ import { type RoutineResult } from '../shared'
 function createCharacterAnalysisPrompt(
   currentCharacter: Character,
   allCharacters: Character[],
+  commonPrompt: string,
   history: RoutineResult[]
 ) {
   const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
   
   return `
-あなたは「${currentCharacter.name}」というキャラクターです。
-
-あなたの情報:
+<共通の情報>
+${commonPrompt}
+</共通の情報>
+<あなたの情報>
 名前: ${currentCharacter.name}
 説明: ${currentCharacter.description}
-隠された情報: ${currentCharacter.hiddenPrompt}
-
-他のキャラクター:
+隠している情報: ${currentCharacter.hiddenPrompt}
+</あなたの情報>
+<他のキャラクター>
 ${otherCharacters.map(char => `
 名前: ${char.name}
 説明: ${char.description}
 `).join('\n')}
 ${history.length > 0
   ? `
-これまでの会話:
+</他のキャラクター>
+<これまでの会話>
 ${history.map((routine) => `
 ${routine.thoughts
 .filter(thought => thought.characterName === currentCharacter.name)
 .map(thought => `あなたの考え: ${thought.thought}`).join('\n')}
 ${routine.speech
-? `${routine.speech.characterName}の発言: 「${routine.speech.speech}」`
+? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
 : '発言なし'}`
 ).join('\n')}
 `
   : ''}
-この状況で、あなたが考えていることと、どの程度話したい気持ちがあるか教えてください。
+</これまでの会話>
 `.trim()
 }
 
 export async function createCharacterThoughts(
   apiKey: string,
+  commonPrompt: string,
   characters: Character[],
   history: RoutineResult[]
 ): Promise<CharacterThought[]> {
@@ -61,7 +65,7 @@ export async function createCharacterThoughts(
   try {
     const responses = await Promise.all(
       characters.map(async (character) => {
-        const prompt = createCharacterAnalysisPrompt(character, characters, history)
+        const prompt = createCharacterAnalysisPrompt(character, characters, commonPrompt, history)
         
         const completion = await openai.chat.completions.create({
           model: "gpt-4o",

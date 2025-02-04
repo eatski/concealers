@@ -20,6 +20,7 @@ import { useState } from 'react'
 
 function ApiHandler({
   apiKey,
+  commonPrompt,
   characters,
   onModeChange
 }: GameStateProps) {
@@ -33,8 +34,8 @@ function ApiHandler({
   } = useSWRMutation<RoutineResult>(
     'chat',
     async () => {
-      const thoughts = await createCharacterThoughts(apiKey, characters, history)
-      const speech = await createCharacterSpeech(apiKey, characters, thoughts, history)
+      const thoughts = await createCharacterThoughts(apiKey, commonPrompt, characters, history)
+      const speech = await createCharacterSpeech(apiKey, commonPrompt, characters, thoughts, history)
       
       const result: RoutineResult = {
         thoughts: thoughts.map((thought, index) => ({
@@ -82,6 +83,19 @@ function ApiHandler({
                 入力画面に戻る
               </Button>
             </Box>
+
+            <Card>
+              <CardContent sx={{ p: 4 }}>
+                <Stack spacing={3}>
+                  <Typography variant="h6">
+                    共通の情報
+                  </Typography>
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {commonPrompt}
+                  </Typography>
+                </Stack>
+              </CardContent>
+            </Card>
 
             {characters.map((character, index) => (
               <Card key={index}>

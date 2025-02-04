@@ -6,17 +6,20 @@ import ApiHandler from './ApiHandler'
 export interface GameStateProps {
   mode: FormMode
   apiKey: string
+  commonPrompt: string
   characters: Character[]
   onCharacterChange: (index: number, field: keyof Character, value: string) => void
   onAddCharacter: () => void
   onRemoveCharacter: (index: number) => void
   onApiKeyChange: (value: string) => void
+  onCommonPromptChange: (value: string) => void
   onModeChange: (mode: FormMode) => void
 }
 
 function GameStateProvider() {
   const [mode, setMode] = useState<FormMode>('input')
   const [apiKey, setApiKey] = useState('')
+  const [commonPrompt, setCommonPrompt] = useState('')
   const [characters, setCharacters] = useState<Character[]>([
     { name: '', description: '', hiddenPrompt: '' }
   ])
@@ -44,11 +47,13 @@ function GameStateProvider() {
   const gameStateProps: GameStateProps = {
     mode,
     apiKey,
+    commonPrompt,
     characters,
     onCharacterChange: handleCharacterChange,
     onAddCharacter: addCharacter,
     onRemoveCharacter: removeCharacter,
     onApiKeyChange: setApiKey,
+    onCommonPromptChange: setCommonPrompt,
     onModeChange: setMode
   }
 
