@@ -92,7 +92,7 @@ export async function createCharacterThoughts(
                   },
                   urgency: {
                     type: 'integer',
-                    description: '発言への意欲（1: 特に話すことがない・誰かが話すのを聞きたい, 2: 強い意欲があるわけではないが話すことがある, 3: 積極的に話したい・話す責務がある）',
+                    description: '発言への意欲（1: 特に話すことがない・誰かが話すのを聞きたい・直近発言したばかり, 2: 強い意欲があるわけではないが話すことがある, 3: 積極的に話したい・話す責務がある）',
                     minimum: 1,
                     maximum: 3
                   }
