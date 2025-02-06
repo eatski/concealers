@@ -11,14 +11,18 @@ export interface GameSettings {
   characters: Character[]
 }
 
+export interface CharacterThought {
+  characterName: string
+  thought: string
+  urgency: 1 | 2 | 3
+}
+
+export interface CharacterSpeech {
+  characterName: string
+  speech: string
+}
+
 export interface RoutineResult {
-  thoughts: Array<{
-    characterName: string
-    thought: string
-    urgency: 1 | 2 | 3
-  }>
-  speech: {
-    characterName: string
-    speech: string
-  } | null
+  thoughts: CharacterThought[]
+  speech: CharacterSpeech | null
 }

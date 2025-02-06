@@ -1,13 +1,6 @@
 import { OpenAI, APIError } from 'openai'
 
-import type { Character } from '../shared'
-
-export interface CharacterThought {
-  thought: string
-  urgency: 1 | 2 | 3
-}
-
-import { type RoutineResult } from '../shared'
+import type { Character, CharacterThought, RoutineResult } from '../shared'
 
 function createCharacterAnalysisPrompt(
   currentCharacter: Character,
@@ -105,8 +98,11 @@ export async function createCharacterThoughts(
         }
 
         try {
-          const response = JSON.parse(functionCall.arguments) as CharacterThought
-          return response
+          const response = JSON.parse(functionCall.arguments) as Omit<CharacterThought, 'characterName'>
+          return {
+            ...response,
+            characterName: character.name
+          }
         } catch (e) {
           console.error('JSON解析エラー:', e)
           throw new Error('APIからの応答の解析に失敗しました')

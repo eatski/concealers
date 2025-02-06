@@ -14,14 +14,7 @@ export async function executeCharacterRoutine(
   const speech = await createCharacterSpeech(openai, commonPrompt, characters, thoughts, history)
   
   return {
-    thoughts: thoughts.map((thought, index) => ({
-      characterName: characters[index].name,
-      thought: thought.thought,
-      urgency: thought.urgency
-    })),
-    speech: speech ? {
-      characterName: speech.character.name,
-      speech: speech.speech
-    } : null
+    thoughts,
+    speech
   }
 }
