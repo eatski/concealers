@@ -64,13 +64,13 @@ ${routine.speech
 }
 
 export async function createCharacterSpeech(
-  apiKey: string,
+  openai: OpenAI,
   commonPrompt: string,
   characters: Character[],
   thoughts: CharacterThought[],
   history: RoutineResult[]
 ): Promise<CharacterSpeech | null> {
-  if (!apiKey || characters.length === 0 || thoughts.length === 0) return null
+  if (characters.length === 0 || thoughts.length === 0) return null
 
   // キャラクターと思考を結合
   const charactersWithThoughts: CharacterWithThought[] = characters.map((character, index) => ({
@@ -81,11 +81,6 @@ export async function createCharacterSpeech(
   // 発言するキャラクターを選択
   const speakingCharacter = selectSpeakingCharacter(charactersWithThoughts)
   if (!speakingCharacter) return null
-
-  const openai = new OpenAI({
-    apiKey: apiKey,
-    dangerouslyAllowBrowser: true
-  })
 
   try {
     const prompt = createSpeechPrompt(speakingCharacter, characters, commonPrompt, history)

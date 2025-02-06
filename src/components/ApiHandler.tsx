@@ -12,6 +12,7 @@ import {
   Stack
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { OpenAI } from 'openai'
 import { createCharacterThoughts } from '../api/analyzeCharacterThoughts'
 import { createCharacterSpeech } from '../api/createCharacterSpeech'
 import { type GameStateProps } from './GameStateProvider'
@@ -34,8 +35,13 @@ function ApiHandler({
   } = useSWRMutation<RoutineResult>(
     'chat',
     async () => {
-      const thoughts = await createCharacterThoughts(apiKey, commonPrompt, characters, history)
-      const speech = await createCharacterSpeech(apiKey, commonPrompt, characters, thoughts, history)
+      const openai = new OpenAI({
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true
+      })
+
+      const thoughts = await createCharacterThoughts(openai, commonPrompt, characters, history)
+      const speech = await createCharacterSpeech(openai, commonPrompt, characters, thoughts, history)
       
       const result: RoutineResult = {
         thoughts: thoughts.map((thought, index) => ({

@@ -50,17 +50,12 @@ ${routine.speech
 }
 
 export async function createCharacterThoughts(
-  apiKey: string,
+  openai: OpenAI,
   commonPrompt: string,
   characters: Character[],
   history: RoutineResult[]
 ): Promise<CharacterThought[]> {
-  if (!apiKey) return []
-  
-  const openai = new OpenAI({
-    apiKey: apiKey,
-    dangerouslyAllowBrowser: true
-  })
+  if (characters.length === 0) return []
 
   try {
     const responses = await Promise.all(
