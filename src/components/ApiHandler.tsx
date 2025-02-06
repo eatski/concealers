@@ -13,11 +13,10 @@ import {
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { OpenAI } from 'openai'
-import { createCharacterThoughts } from '../api/analyzeCharacterThoughts'
-import { createCharacterSpeech } from '../api/createCharacterSpeech'
 import { type GameStateProps } from './GameStateProvider'
 import { type RoutineResult } from '../shared'
 import { useState } from 'react'
+import { executeCharacterRoutine } from '../api/executeCharacterRoutine'
 
 function ApiHandler({
   apiKey,
@@ -32,7 +31,7 @@ function ApiHandler({
     isMutating,
     error,
     data
-  } = useSWRMutation<RoutineResult>(
+  } = useSWRMutation<RoutineResult, Error, string>(
     'chat',
     async () => {
       const openai = new OpenAI({
@@ -40,21 +39,7 @@ function ApiHandler({
         dangerouslyAllowBrowser: true
       })
 
-      const thoughts = await createCharacterThoughts(openai, commonPrompt, characters, history)
-      const speech = await createCharacterSpeech(openai, commonPrompt, characters, thoughts, history)
-      
-      const result: RoutineResult = {
-        thoughts: thoughts.map((thought, index) => ({
-          characterName: characters[index].name,
-          thought: thought.thought,
-          urgency: thought.urgency
-        })),
-        speech: speech ? {
-          characterName: speech.character.name,
-          speech: speech.speech
-        } : null
-      }
-      
+      const result = await executeCharacterRoutine(openai, commonPrompt, characters, history)
       setHistory(prev => [...prev, result])
       return result
     }
