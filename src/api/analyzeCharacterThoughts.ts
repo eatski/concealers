@@ -1,4 +1,4 @@
-import { OpenAI, APIError } from 'openai'
+import { OpenAI } from 'openai'
 
 import type { Character, CharacterThought, RoutineResult } from '../shared'
 
@@ -50,76 +50,59 @@ export async function createCharacterThoughts(
 ): Promise<CharacterThought[]> {
   if (characters.length === 0) return []
 
-  try {
-    const responses = await Promise.all(
-      characters.map(async (character) => {
-        const prompt = createCharacterAnalysisPrompt(character, characters, commonPrompt, history)
-        
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o",
-          messages: [
-            { 
-              role: 'system',
-              content: 'あなたの現在の心情と発言意欲を回答してください。過去あなたの発言が多い場合は発言意欲は低めにしてください。'
-            },
-            { 
-              role: 'user', 
-              content: prompt 
-            }
-          ],
-          functions: [
-            {
-              name: 'analyzeThoughtAndUrgency',
-              description: 'キャラクターの考えと発言意欲',
-              parameters: {
-                type: 'object',
-                properties: {
-                  thought: {
-                    type: 'string',
-                    description: '現在考えていることを100文字程度で説明'
-                  },
-                  urgency: {
-                    type: 'integer',
-                    description: '発言への意欲（1: 特に話すことがない・誰かが話すのを聞きたい・直近発言したばかり, 2: 強い意欲があるわけではないが話すことがある, 3: 積極的に話したい・話す責務がある）',
-                    minimum: 1,
-                    maximum: 3
-                  }
-                },
-                required: ['thought', 'urgency']
-              }
-            }
-          ],
-          function_call: { name: 'analyzeThoughtAndUrgency' }
-        })
-
-        const functionCall = completion.choices[0].message.function_call
-        if (!functionCall || !functionCall.arguments) {
-          throw new Error('APIからの応答が不正です')
-        }
-
-        try {
-          const response = JSON.parse(functionCall.arguments) as Omit<CharacterThought, 'characterName'>
-          return {
-            ...response,
-            characterName: character.name
+  const responses = await Promise.all(
+    characters.map(async (character) => {
+      const prompt = createCharacterAnalysisPrompt(character, characters, commonPrompt, history)
+      
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: 'system',
+            content: 'あなたの現在の心情と発言意欲を回答してください。過去あなたの発言が多い場合は発言意欲は低めにしてください。'
+          },
+          {
+            role: 'user',
+            content: prompt
           }
-        } catch (e) {
-          console.error('JSON解析エラー:', e)
-          throw new Error('APIからの応答の解析に失敗しました')
-        }
+        ],
+        functions: [
+          {
+            name: 'analyzeThoughtAndUrgency',
+            description: 'キャラクターの考えと発言意欲',
+            parameters: {
+              type: 'object',
+              properties: {
+                thought: {
+                  type: 'string',
+                  description: '現在考えていることを100文字程度で説明'
+                },
+                urgency: {
+                  type: 'integer',
+                  description: '発言への意欲（1: 特に話すことがない・誰かが話すのを聞きたい・直近発言したばかり, 2: 強い意欲があるわけではないが話すことがある, 3: 積極的に話したい・話す責務がある）',
+                  minimum: 1,
+                  maximum: 3
+                }
+              },
+              required: ['thought', 'urgency']
+            }
+          }
+        ],
+        function_call: { name: 'analyzeThoughtAndUrgency' }
       })
-    )
 
-    return responses
-  } catch (error) {
-    console.error('Error:', error)
-    if (error instanceof APIError) {
-      if (error.status === 401) {
-        throw new Error('APIキーが無効です')
-      } else if (error.status === 429) {
-        throw new Error('リクエスト制限に達しました')
+      const functionCall = completion.choices[0].message.function_call
+      if (!functionCall || !functionCall.arguments) {
+        throw new Error('APIからの応答が不正です')
       }
-    }
-    throw error
-  }
+
+      const response = JSON.parse(functionCall.arguments) as Omit<CharacterThought, 'characterName'>
+      return {
+        ...response,
+        characterName: character.name
+      }
+    })
+  )
+
+  return responses
 }

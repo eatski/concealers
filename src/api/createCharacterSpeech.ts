@@ -1,4 +1,4 @@
-import { OpenAI, APIError } from 'openai'
+import { OpenAI } from 'openai'
 import type { Character, CharacterThought, CharacterSpeech, RoutineResult } from '../shared'
 
 function selectSpeakingCharacter(thoughts: CharacterThought[]): CharacterThought | null {
@@ -71,64 +71,47 @@ export async function createCharacterSpeech(
   const selectedCharacter = characters.find(c => c.name === selectedThought.characterName)
   if (!selectedCharacter) return null
 
-  try {
-    const prompt = createSpeechPrompt(selectedCharacter, selectedThought, characters, commonPrompt, history)
-    
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { 
-          role: 'system',
-          content: '与えられた状況に基づいて、キャラクターらしい自然な発言を生成してください。発言は100文字程度に収めてください。'
-        },
-        { 
-          role: 'user', 
-          content: prompt 
-        }
-      ],
-      functions: [
-        {
-          name: 'generateSpeech',
-          description: 'キャラクターの発言を生成',
-          parameters: {
-            type: 'object',
-            properties: {
-              speech: {
-                type: 'string',
-                description: 'キャラクターの発言内容'
-              }
-            },
-            required: ['speech']
-          }
-        }
-      ],
-      function_call: { name: 'generateSpeech' }
-    })
-
-    const functionCall = completion.choices[0].message.function_call
-    if (!functionCall || !functionCall.arguments) {
-      throw new Error('APIからの応答が不正です')
-    }
-
-    try {
-      const response = JSON.parse(functionCall.arguments) as { speech: string }
-      return {
-        characterName: selectedCharacter.name,
-        speech: response.speech
+  const prompt = createSpeechPrompt(selectedCharacter, selectedThought, characters, commonPrompt, history)
+  
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: 'system',
+        content: '与えられた状況に基づいて、キャラクターらしい自然な発言を生成してください。発言は100文字程度に収めてください。'
+      },
+      {
+        role: 'user',
+        content: prompt
       }
-    } catch (e) {
-      console.error('JSON解析エラー:', e)
-      throw new Error('APIからの応答の解析に失敗しました')
-    }
-  } catch (error) {
-    console.error('Error:', error)
-    if (error instanceof APIError) {
-      if (error.status === 401) {
-        throw new Error('APIキーが無効です')
-      } else if (error.status === 429) {
-        throw new Error('リクエスト制限に達しました')
+    ],
+    functions: [
+      {
+        name: 'generateSpeech',
+        description: 'キャラクターの発言を生成',
+        parameters: {
+          type: 'object',
+          properties: {
+            speech: {
+              type: 'string',
+              description: 'キャラクターの発言内容'
+            }
+          },
+          required: ['speech']
+        }
       }
-    }
-    throw error
+    ],
+    function_call: { name: 'generateSpeech' }
+  })
+
+  const functionCall = completion.choices[0].message.function_call
+  if (!functionCall || !functionCall.arguments) {
+    throw new Error('APIからの応答が不正です')
+  }
+
+  const response = JSON.parse(functionCall.arguments) as { speech: string }
+  return {
+    characterName: selectedCharacter.name,
+    speech: response.speech
   }
 }
