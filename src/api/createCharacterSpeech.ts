@@ -1,7 +1,10 @@
 import { OpenAI } from 'openai'
 import type { Character, CharacterThought, CharacterSpeech, RoutineResult } from '../shared'
 
-function selectSpeakingCharacter(thoughts: CharacterThought[]): CharacterThought | null {
+function selectSpeakingCharacter(
+  thoughts: CharacterThought[],
+  random: () => number = Math.random
+): CharacterThought | null {
   if (thoughts.length === 0) return null
 
   // 最も高い発言意欲を持つキャラクターを見つける
@@ -9,7 +12,7 @@ function selectSpeakingCharacter(thoughts: CharacterThought[]): CharacterThought
   const highestUrgencyThoughts = thoughts.filter(t => t.urgency === maxUrgency)
 
   // 最も高い発言意欲を持つキャラクターが複数いる場合はランダムに1人選択
-  return highestUrgencyThoughts[Math.floor(Math.random() * highestUrgencyThoughts.length)]
+  return highestUrgencyThoughts[Math.floor(random() * highestUrgencyThoughts.length)]
 }
 
 function createSpeechPrompt(
@@ -59,12 +62,13 @@ export async function createCharacterSpeech(
   commonPrompt: string,
   characters: Character[],
   thoughts: CharacterThought[],
-  history: RoutineResult[]
+  history: RoutineResult[],
+  random: () => number = Math.random
 ): Promise<CharacterSpeech | null> {
   if (characters.length === 0 || thoughts.length === 0) return null
 
   // 発言するキャラクターの思考を選択
-  const selectedThought = selectSpeakingCharacter(thoughts)
+  const selectedThought = selectSpeakingCharacter(thoughts, random)
   if (!selectedThought) return null
 
   // 選択された思考に対応するキャラクターを取得

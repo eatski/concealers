@@ -8,10 +8,11 @@ export async function executeCharacterRoutine(
   openai: OpenAI,
   commonPrompt: string,
   characters: GameStateProps['characters'],
-  history: RoutineResult[]
+  history: RoutineResult[],
+  random: () => number = Math.random
 ): Promise<RoutineResult> {
   const thoughts = await createCharacterThoughts(openai, commonPrompt, characters, history)
-  const speech = await createCharacterSpeech(openai, commonPrompt, characters, thoughts, history)
+  const speech = await createCharacterSpeech(openai, commonPrompt, characters, thoughts, history, random)
   
   return {
     thoughts,

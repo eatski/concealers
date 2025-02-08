@@ -1,0 +1,43 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`executeCharacterRoutine > 会話履歴を考慮して思考と発言が生成される 1`] = `
+{
+  "speech": {
+    "characterName": "新田探偵",
+    "speech": "まあ、関係者とも話はしているが、特に目新しいことはないな。ただ、彼らも随分と動揺していた。君はどうだ？新たな手がかりは見つかったかい？",
+  },
+  "thoughts": [
+    {
+      "characterName": "新田探偵",
+      "thought": "私自身も遺産が絡んでいるので情報を慎重に選びつつ、山下探偵の様子を探りたい。と同時に、他の重要な情報が出揃うのを待ちたい。",
+      "urgency": 2,
+    },
+    {
+      "characterName": "山下探偵",
+      "thought": "新田探偵がどのような情報を持っているか注意深く観察し、次にどのように質問すべきか考えている。彼の反応を確認したい。",
+      "urgency": 2,
+    },
+  ],
+}
+`;
+
+exports[`executeCharacterRoutine > 探偵たちの思考と発言が生成される 1`] = `
+{
+  "speech": {
+    "characterName": "新田探偵",
+    "speech": "山下くん、人は見た目に惑わされやすいものだ。君の観察力で何か新たに気付いたことはあるかね？",
+  },
+  "thoughts": [
+    {
+      "characterName": "新田探偵",
+      "thought": "山下探偵の経験不足が調査の妨げになるかもしれないが、彼の新鮮な視点には価値がある。自身の遺産に関する情報は隠しておく必要がある。",
+      "urgency": 2,
+    },
+    {
+      "characterName": "山下探偵",
+      "thought": "新田探偵の行動を監視しつつ、事件の真相を探る必要がある。自身の未熟さを認識しつつも、この場で信頼を得るためには積極的に関与することが重要だと感じている。",
+      "urgency": 2,
+    },
+  ],
+}
+`;
