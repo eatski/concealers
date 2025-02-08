@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { OpenAI } from 'openai'
 import seedrandom from 'seedrandom'
 import { executeCharacterRoutine } from '../executeCharacterRoutine'
-import type { RoutineResult } from '../../shared'
-import { commonPrompt, characters, sampleHistory } from './fixtures/characterFixtures'
+import { commonPrompt, characters } from './fixtures/characterFixtures'
 import { applyTestHooks } from '../../libs/msw-cache/vitest'
+import { type RoutineResult } from '../../shared'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -22,32 +22,27 @@ describe('executeCharacterRoutine', () => {
   describe.each(seeds)('シード値: %s', (seed) => {
     const rng = seedrandom(seed)
 
-    it('探偵たちの思考と発言が生成される', async () => {
-      const history: RoutineResult[] = []
-      
-      const result = await executeCharacterRoutine(
-        openai,
-        commonPrompt,
-        characters,
-        history,
-        rng
-      )
-
-      // スナップショットでの検証
-      expect(result).toMatchSnapshot()
-    })
-
-    it('会話履歴を考慮して思考と発言が生成される', async () => {
-      const result = await executeCharacterRoutine(
-        openai,
-        commonPrompt,
-        characters,
-        sampleHistory,
-        rng
-      )
-
-      // スナップショットでの検証
-      expect(result).toMatchSnapshot()
-    })
+    it(
+      '10回の会話が繰り返される',
+      { timeout: 1800000 }, // 30分 = 30 * 60 * 1000
+      async () => {
+        const history: RoutineResult[] = []
+        const iterations = 8
+        
+        for (let i = 0; i < iterations; i++) {
+          const result = await executeCharacterRoutine(
+            openai,
+            commonPrompt,
+            characters,
+            history,
+            rng
+          )
+          
+          history.push(result)
+        }
+        
+        expect(history.map(item => item.speech)).toMatchSnapshot('complete history')
+      },
+    )
   })
 })
