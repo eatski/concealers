@@ -13,7 +13,6 @@ const openai = new OpenAI({
 const seeds = [
   'test-seed-1',
   'test-seed-2',
-  'test-seed-3'
 ] as const
 
 describe('executeCharacterRoutine', () => {
@@ -27,7 +26,7 @@ describe('executeCharacterRoutine', () => {
       { timeout: 1800000 }, // 30分 = 30 * 60 * 1000
       async () => {
         const history: RoutineResult[] = []
-        const iterations = 8
+        const iterations = 12
         
         for (let i = 0; i < iterations; i++) {
           const result = await executeCharacterRoutine(
