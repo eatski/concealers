@@ -10,37 +10,44 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
 
-// テスト用の固定シード値を使用した乱数生成器
-const rng = seedrandom('fixed-seed-for-test')
+const seeds = [
+  'test-seed-1',
+  'test-seed-2',
+  'test-seed-3'
+] as const
 
 describe('executeCharacterRoutine', () => {
   applyTestHooks();
 
-  it('探偵たちの思考と発言が生成される', async () => {
-    const history: RoutineResult[] = []
-    
-    const result = await executeCharacterRoutine(
-      openai,
-      commonPrompt,
-      characters,
-      history,
-      rng
-    )
+  describe.each(seeds)('シード値: %s', (seed) => {
+    const rng = seedrandom(seed)
 
-    // スナップショットでの検証
-    expect(result).toMatchSnapshot()
-  })
+    it('探偵たちの思考と発言が生成される', async () => {
+      const history: RoutineResult[] = []
+      
+      const result = await executeCharacterRoutine(
+        openai,
+        commonPrompt,
+        characters,
+        history,
+        rng
+      )
 
-  it('会話履歴を考慮して思考と発言が生成される', async () => {
-    const result = await executeCharacterRoutine(
-      openai,
-      commonPrompt,
-      characters,
-      sampleHistory,
-      rng
-    )
+      // スナップショットでの検証
+      expect(result).toMatchSnapshot()
+    })
 
-    // スナップショットでの検証
-    expect(result).toMatchSnapshot()
+    it('会話履歴を考慮して思考と発言が生成される', async () => {
+      const result = await executeCharacterRoutine(
+        openai,
+        commonPrompt,
+        characters,
+        sampleHistory,
+        rng
+      )
+
+      // スナップショットでの検証
+      expect(result).toMatchSnapshot()
+    })
   })
 })
