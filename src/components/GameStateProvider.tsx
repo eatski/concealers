@@ -1,5 +1,7 @@
 import { useState, useSyncExternalStore } from 'react'
-import { type FormMode, type Character } from '../shared'
+import { type Character } from '../shared'
+
+export type FormMode = 'input' | 'confirm'
 import SettingsForm from './SettingsForm'
 import ApiHandler from './ApiHandler'
 

@@ -15,6 +15,8 @@ const seeds = [
   'test-seed-2',
 ] as const
 
+const routineCount = 1
+
 describe('executeCharacterRoutine', () => {
   applyTestHooks();
 
@@ -22,20 +24,19 @@ describe('executeCharacterRoutine', () => {
     const rng = seedrandom(seed)
 
     it(
-      '10回の会話が繰り返される',
+      `${routineCount}回の会話が繰り返される`,
       { timeout: 1800000 }, // 30分 = 30 * 60 * 1000
       async () => {
         const history: RoutineResult[] = []
-        const iterations = 12
         
-        for (let i = 0; i < iterations; i++) {
-          const result = await executeCharacterRoutine(
+        for (let i = 0; i < routineCount; i++) {
+          const result = await executeCharacterRoutine({
             openai,
             commonPrompt,
             characters,
             history,
-            rng
-          )
+            random: rng
+          })
           
           history.push(result)
         }

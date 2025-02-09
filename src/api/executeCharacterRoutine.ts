@@ -1,21 +1,57 @@
-import { OpenAI } from 'openai'
 import { createCharacterThoughts } from './analyzeCharacterThoughts'
 import { createCharacterSpeech } from './createCharacterSpeech'
-import { type GameStateProps } from '../components/GameStateProvider'
-import { type RoutineResult } from '../shared'
+import { searchRelevantMemories } from './searchRelevantMemories'
+import { OpenAI } from 'openai'
+import { type Character, type RoutineResult } from '../shared'
 
-export async function executeCharacterRoutine(
-  openai: OpenAI,
-  commonPrompt: string,
-  characters: GameStateProps['characters'],
-  history: RoutineResult[],
-  random: () => number = Math.random
-): Promise<RoutineResult> {
-  const thoughts = await createCharacterThoughts(openai, commonPrompt, characters, history)
-  const speech = await createCharacterSpeech(openai, commonPrompt, characters, thoughts, history, random)
+export interface ExecuteCharacterRoutineArgs {
+  openai: OpenAI
+  commonPrompt: string
+  characters: Character[]
+  history: RoutineResult[]
+  random?: () => number
+}
+
+export async function executeCharacterRoutine({
+  openai,
+  commonPrompt,
+  characters,
+  history,
+  random = Math.random
+}: ExecuteCharacterRoutineArgs): Promise<RoutineResult> {
+  // 各キャラクターの思考を並列で生成
+  const characterMemoriesPromises = characters.map(async character => {
+    // キャラクターごとに関連する記憶を検索
+    const relevantMemories = await searchRelevantMemories({
+      openai,
+      commonPrompt,
+      currentCharacter: character,
+      characters,
+      history
+    })
+    
+    return createCharacterThoughts({
+      openai,
+      commonPrompt,
+      currentCharacter: character,
+      otherCharacters: characters.filter(c => c !== character),
+      history,
+      relevantMemories
+    })
+  })
+
+  const characterMemories = await Promise.all(characterMemoriesPromises)
+  const speech = await createCharacterSpeech({
+    openai,
+    commonPrompt,
+    characters,
+    characterMemories,
+    history,
+    random
+  })
   
   return {
-    thoughts,
+    characterMemories,
     speech
   }
 }

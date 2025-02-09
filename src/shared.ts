@@ -1,5 +1,3 @@
-export type FormMode = 'input' | 'confirm'
-
 export interface Character {
   name: string
   description: string
@@ -11,9 +9,15 @@ export interface GameSettings {
   characters: Character[]
 }
 
-export interface CharacterThought {
-  characterName: string
+export interface MemoryItem {
+  recognizedInfo: string
   thought: string
+  tags: string[]
+}
+
+export interface CharacterMemories {
+  characterName: string
+  memories: MemoryItem[]
   urgency: 1 | 2 | 3
 }
 
@@ -23,6 +27,6 @@ export interface CharacterSpeech {
 }
 
 export interface RoutineResult {
-  thoughts: CharacterThought[]
+  characterMemories: CharacterMemories[]
   speech: CharacterSpeech | null
 }
