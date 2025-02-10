@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createCharacterThoughts > 履歴が3件ある状態でのキャラクターの思考を生成できる 1`] = `
+{
+  "characterName": "佐藤刑事",
+  "memories": [
+    {
+      "recognizedInfo": "山田探偵は夜間に警備の空白があり、不審人物の目撃情報があると指摘。",
+      "tags": [
+        "警備の空白",
+        "目撃情報",
+      ],
+      "thought": "警備体制に問題があることを山田探偵が指摘。内通者の可能性も考慮すべき。",
+    },
+    {
+      "recognizedInfo": "内部犯行の可能性が高いとの分析を持っている。",
+      "tags": [
+        "内部犯行",
+        "情報開示",
+      ],
+      "thought": "この情報をどの段階で共有するかが問題。時期を見て開示したい。",
+    },
+  ],
+  "urgency": 2,
+}
+`;
+
+exports[`createCharacterThoughts > 履歴がない状態でのキャラクターの思考を生成できる 1`] = `
+{
+  "characterName": "佐藤刑事",
+  "memories": [
+    {
+      "recognizedInfo": "連続強盗事件の捜査を依頼された探偵事務所のメンバーである。",
+      "tags": [
+        "探偵事務所",
+        "情報共有",
+      ],
+      "thought": "事件の真相を探るため、情報を共有し合うことが重要である。",
+    },
+    {
+      "recognizedInfo": "犯人の手口から内部犯行である可能性が高いと気づいている。",
+      "tags": [
+        "内部犯行",
+        "手口",
+      ],
+      "thought": "この情報をいつどのように共有するかが鍵だ。",
+    },
+  ],
+  "urgency": 1,
+}
+`;

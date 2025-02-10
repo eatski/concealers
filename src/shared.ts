@@ -18,7 +18,6 @@ export interface MemoryItem {
 export interface CharacterMemories {
   characterName: string
   memories: MemoryItem[]
-  urgency: 1 | 2 | 3
 }
 
 export interface CharacterSpeech {

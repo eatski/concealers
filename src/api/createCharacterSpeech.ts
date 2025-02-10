@@ -1,24 +1,25 @@
 import { OpenAI } from 'openai'
-import type { Character, CharacterMemories, CharacterSpeech, RoutineResult } from '../shared'
+import type { Character, CharacterSpeech, RoutineResult } from '../shared'
+import type { CharacterMemoriesWithUrgency } from './analyzeCharacterThoughts'
 
 export interface CreateCharacterSpeechArgs {
   openai: OpenAI
   commonPrompt: string
   characters: Character[]
-  characterMemories: CharacterMemories[]
+  characterMemories: CharacterMemoriesWithUrgency[]
   history: RoutineResult[]
   random?: () => number
 }
 
 interface SelectSpeakingCharacterArgs {
-  characterMemories: CharacterMemories[]
+  characterMemories: CharacterMemoriesWithUrgency[]
   random?: () => number
 }
 
 function selectSpeakingCharacter({
   characterMemories,
   random = Math.random
-}: SelectSpeakingCharacterArgs): CharacterMemories | null {
+}: SelectSpeakingCharacterArgs): CharacterMemoriesWithUrgency | null {
   if (characterMemories.length === 0) return null
 
   // 最も高い発言意欲を持つキャラクターを見つける
@@ -31,7 +32,7 @@ function selectSpeakingCharacter({
 
 interface CreateSpeechPromptArgs {
   character: Character
-  characterMemories: CharacterMemories
+  characterMemories: CharacterMemoriesWithUrgency
   allCharacters: Character[]
   commonPrompt: string
   history: RoutineResult[]

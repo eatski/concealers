@@ -18,6 +18,11 @@ interface CreateCharacterAnalysisPromptArgs {
   relevantMemories: MemoryItem[]
 }
 
+// 内部的に使用する型定義
+export interface CharacterMemoriesWithUrgency extends CharacterMemories {
+  urgency: 1 | 2 | 3
+}
+
 function createCharacterAnalysisPrompt({
   currentCharacter,
   allCharacters,
@@ -73,7 +78,7 @@ export async function createCharacterThoughts({
   otherCharacters,
   history,
   relevantMemories
-}: CreateCharacterThoughtsArgs): Promise<CharacterMemories> {
+}: CreateCharacterThoughtsArgs): Promise<CharacterMemoriesWithUrgency> {
   const prompt = createCharacterAnalysisPrompt({
     currentCharacter,
     allCharacters: [currentCharacter, ...otherCharacters],
