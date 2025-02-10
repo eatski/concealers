@@ -34,7 +34,7 @@ export async function executeCharacterRoutine({
       openai,
       commonPrompt,
       currentCharacter: character,
-      otherCharacters: characters.filter(c => c !== character),
+      allCharacters: characters,
       history,
       relevantMemories
     })

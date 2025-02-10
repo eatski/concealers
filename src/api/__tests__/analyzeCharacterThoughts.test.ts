@@ -38,14 +38,13 @@ describe('createCharacterThoughts', () => {
 
   it('履歴がない状態でのキャラクターの思考を生成できる', async () => {
     const currentCharacter = characters[0]
-    const otherCharacters = characters.slice(1)
     const history: RoutineResult[] = []
 
     const result = await createCharacterThoughts({
       openai,
       commonPrompt,
       currentCharacter,
-      otherCharacters,
+      allCharacters: characters,
       history,
       relevantMemories: []
     })
@@ -55,7 +54,6 @@ describe('createCharacterThoughts', () => {
 
   it('履歴が3件ある状態でのキャラクターの思考を生成できる', async () => {
     const currentCharacter = characters[0]
-    const otherCharacters = characters.slice(1)
     const history: RoutineResult[] = [
       {
         characterMemories: [{
@@ -93,7 +91,7 @@ describe('createCharacterThoughts', () => {
       openai,
       commonPrompt,
       currentCharacter,
-      otherCharacters,
+      allCharacters: characters,
       history,
       relevantMemories: []
     })

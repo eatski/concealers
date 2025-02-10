@@ -5,7 +5,7 @@ export interface CreateCharacterThoughtsArgs {
   openai: OpenAI
   commonPrompt: string
   currentCharacter: Character
-  otherCharacters: Character[]
+  allCharacters: Character[]
   history: RoutineResult[]
   relevantMemories: MemoryItem[]
 }
@@ -82,13 +82,13 @@ export async function createCharacterThoughts({
   openai,
   commonPrompt,
   currentCharacter,
-  otherCharacters,
+  allCharacters,
   history,
   relevantMemories
 }: CreateCharacterThoughtsArgs): Promise<CharacterMemoriesWithUrgency> {
   const prompt = createCharacterAnalysisPrompt({
     currentCharacter,
-    allCharacters: [currentCharacter, ...otherCharacters],
+    allCharacters,
     commonPrompt,
     history,
     relevantMemories
