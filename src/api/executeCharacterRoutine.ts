@@ -1,6 +1,7 @@
 import { createCharacterThoughts } from './analyzeCharacterThoughts'
 import { createCharacterSpeech } from './createCharacterSpeech'
 import { searchRelevantMemories } from './searchRelevantMemories'
+import { selectSpeakingCharacter } from './selectSpeakingCharacter'
 import { OpenAI } from 'openai'
 import { type Character, type RoutineResult } from '../shared'
 
@@ -19,8 +20,8 @@ export async function executeCharacterRoutine({
   history,
   random = Math.random
 }: ExecuteCharacterRoutineArgs): Promise<RoutineResult> {
-  // 各キャラクターの思考を並列で生成
-  const characterMemoriesPromises = characters.map(async character => {
+  // 各キャラクターの思考と関連する記憶を並列で生成
+  const characterData = await Promise.all(characters.map(async character => {
     // キャラクターごとに関連する記憶を検索
     const relevantMemories = await searchRelevantMemories({
       openai,
@@ -30,7 +31,7 @@ export async function executeCharacterRoutine({
       history
     })
     
-    return createCharacterThoughts({
+    const memories = await createCharacterThoughts({
       openai,
       commonPrompt,
       currentCharacter: character,
@@ -38,17 +39,38 @@ export async function executeCharacterRoutine({
       history,
       relevantMemories
     })
-  })
 
-  const characterMemories = await Promise.all(characterMemoriesPromises)
-  const speech = await createCharacterSpeech({
-    openai,
-    commonPrompt,
+    return {
+      character,
+      memories,
+      relevantMemories
+    }
+  }))
+
+  const characterMemories = characterData.map(data => data.memories)
+  
+  // 発言するキャラクターを選択
+  const selectedCharacter = selectSpeakingCharacter({
     characters,
     characterMemories,
-    history,
     random
   })
+
+  const selectedData = selectedCharacter 
+    ? characterData.find(data => data.character.name === selectedCharacter.name)
+    : null
+
+  const speech = selectedData
+    ? await createCharacterSpeech({
+        openai,
+        commonPrompt,
+        character: selectedData.character,
+        characterMemories: selectedData.memories,
+        relevantMemories: selectedData.relevantMemories,
+        characters,
+        history
+      })
+    : null
   
   return {
     characterMemories,

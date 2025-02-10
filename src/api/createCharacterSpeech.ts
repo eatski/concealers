@@ -1,48 +1,31 @@
 import { OpenAI } from 'openai'
-import type { Character, CharacterSpeech, RoutineResult } from '../shared'
+import type { Character, CharacterSpeech, RoutineResult, MemoryItem } from '../shared'
 import type { CharacterMemoriesWithUrgency } from './analyzeCharacterThoughts'
+import { buildPrompt } from '../libs/prompt-builder'
 
 export interface CreateCharacterSpeechArgs {
   openai: OpenAI
   commonPrompt: string
+  character: Character
+  characterMemories: CharacterMemoriesWithUrgency
+  relevantMemories: MemoryItem[]
   characters: Character[]
-  characterMemories: CharacterMemoriesWithUrgency[]
   history: RoutineResult[]
-  random?: () => number
-}
-
-interface SelectSpeakingCharacterArgs {
-  characterMemories: CharacterMemoriesWithUrgency[]
-  random?: () => number
-}
-
-function selectSpeakingCharacter({
-  characterMemories,
-  random = Math.random
-}: SelectSpeakingCharacterArgs): CharacterMemoriesWithUrgency | null {
-  if (characterMemories.length === 0) return null
-
-  // 最も高い発言意欲を持つキャラクターを見つける
-  const maxUrgency = Math.max(...characterMemories.map(cm => cm.urgency))
-  const highestUrgencyCharacters = characterMemories.filter(cm => cm.urgency === maxUrgency)
-
-  // 最も高い発言意欲を持つキャラクターが複数いる場合はランダムに1人選択
-  return highestUrgencyCharacters[Math.floor(random() * highestUrgencyCharacters.length)]
 }
 
 interface CreateSpeechPromptArgs {
   character: Character
   characterMemories: CharacterMemoriesWithUrgency
+  relevantMemories: MemoryItem[]
   allCharacters: Character[]
   commonPrompt: string
   history: RoutineResult[]
 }
 
-import { buildPrompt } from '../libs/prompt-builder'
-
 function createSpeechPrompt({
   character,
   characterMemories,
+  relevantMemories,
   allCharacters,
   commonPrompt,
   history
@@ -62,6 +45,13 @@ function createSpeechPrompt({
 隠している情報: ${character.hiddenPrompt}
 現在の考え:
 ${thoughts}`
+    },
+    {
+      name: '関連する記憶',
+      content: relevantMemories.map(m => 
+        `認識した情報: ${m.recognizedInfo}
+考え: ${m.thought}`
+      ).join('\n\n')
     },
     {
       name: '他のキャラクター',
@@ -93,24 +83,18 @@ ${routine.speech
 export async function createCharacterSpeech({
   openai,
   commonPrompt,
-  characters,
+  character,
   characterMemories,
+  relevantMemories,
+  characters,
   history,
-  random = Math.random
 }: CreateCharacterSpeechArgs): Promise<CharacterSpeech | null> {
-  if (characters.length === 0 || characterMemories.length === 0) return null
-
-  // 発言するキャラクターの思考を選択
-  const selectedCharacterMemories = selectSpeakingCharacter({ characterMemories, random })
-  if (!selectedCharacterMemories) return null
-
-  // 選択された思考に対応するキャラクターを取得
-  const selectedCharacter = characters.find(c => c.name === selectedCharacterMemories.characterName)
-  if (!selectedCharacter) return null
+  if (!character || !characterMemories) return null
 
   const prompt = createSpeechPrompt({
-    character: selectedCharacter,
-    characterMemories: selectedCharacterMemories,
+    character,
+    characterMemories,
+    relevantMemories,
     allCharacters: characters,
     commonPrompt,
     history
@@ -154,7 +138,7 @@ export async function createCharacterSpeech({
 
   const response = JSON.parse(functionCall.arguments) as { speech: string }
   return {
-    characterName: selectedCharacter.name,
+    characterName: character.name,
     speech: response.speech
   }
 }
