@@ -41,7 +41,8 @@ describe('executeCharacterRoutine', () => {
           history.push(result)
         }
         
-        expect(history.map(item => item.speech)).toMatchSnapshot('complete history')
+        expect(history).toMatchSnapshot('complete history')
+        expect(history.map(r => r.speech)).toMatchSnapshot('speeches')
       },
     )
   })
