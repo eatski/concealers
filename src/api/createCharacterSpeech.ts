@@ -74,8 +74,8 @@ ${thoughts}`
 
   if (history.length > 0) {
     sections.push({
-      name: 'これまでの会話',
-      content: history.map((routine) => {
+      name: '直近の会話',
+      content: history.slice(-3).map((routine) => {
         const characterMemories = routine.characterMemories
           .filter(cm => cm.characterName === character.name)
           .flatMap(cm => cm.memories);

@@ -65,15 +65,15 @@ function createCharacterAnalysisPrompt({
   }
 
   if (history.length > 0) {
-    sections.push({
-      name: 'これまでの会話',
-      content: history.map((routine) =>
-        `${routine.speech
-          ? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
-          : '発言なし'}`
-      ).join('\n')
-    })
-  }
+  sections.push({
+    name: '直近の会話',
+    content: history.slice(-3).map((routine) =>
+      `${routine.speech
+        ? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
+        : '発言なし'}`
+    ).join('\n')
+  })
+}
 
   return buildPrompt(sections)
 }
