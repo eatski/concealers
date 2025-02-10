@@ -1,19 +1,51 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`executeCharacterRoutine > シード値: test-seed-1 > 1回の会話が繰り返される > complete history 1`] = `
+exports[`executeCharacterRoutine > シード値: test-seed-1 > 5回の会話が繰り返される > complete history 1`] = `
 [
   {
     "characterName": "新田たける",
     "speech": "最近、寝床に毛がついて困るんですけど、皆さんはどうですか？掃除って大変ですよね。",
   },
+  {
+    "characterName": "田中美智子",
+    "speech": "私も同じことを感じてます。ペットの毛が家具に絡んだりするのは大変ですね。掃除する頻度ってどれくらいですか？",
+  },
+  {
+    "characterName": "田中美智子",
+    "speech": "お掃除は確かに大変ですね。でも、その苦労も可愛さには敵わないというか…、皆さんはペットを飼うことで感じる一番のメリットって何ですか？教えてください。",
+  },
+  {
+    "characterName": "田中美智子",
+    "speech": "ペットって、愛情を注いでる分だけ返ってくる気がしますよね。皆さんのペットはどんな種類ですか？",
+  },
+  {
+    "characterName": "沢山修二",
+    "speech": "そうですね、可愛さに言葉じゃ表せない魅力がありますね。私の家では元気な犬を飼っていますが、皆さんのペットはどうですか？",
+  },
 ]
 `;
 
-exports[`executeCharacterRoutine > シード値: test-seed-2 > 1回の会話が繰り返される > complete history 1`] = `
+exports[`executeCharacterRoutine > シード値: test-seed-2 > 5回の会話が繰り返される > complete history 1`] = `
 [
   {
     "characterName": "山下太郎",
     "speech": "最近、職場で誰かがお世話になった話はありますか？何か面白いエピソードがあれば教えてほしいです。",
+  },
+  {
+    "characterName": "田中美智子",
+    "speech": "職場で同僚が新しいペットを迎えたんですけど、どんな種類か聞き逃してしまって。皆さん、ペットに詳しいですか？",
+  },
+  {
+    "characterName": "沢山修二",
+    "speech": "職場の同僚が犬を飼い始めたって話を聞いたことがありますが、自分ではペットは飼ってないんです。皆さんはどうですか？",
+  },
+  {
+    "characterName": "沢山修二",
+    "speech": "僕もペットはいないけど、犬のことは別々の友人から聞いて面白い話がたくさんあるよ。最近は散歩が大事って話題になったね。田中さんや山下さんは何か面白いペットの話ありますか？",
+  },
+  {
+    "characterName": "田中美智子",
+    "speech": "沢山さんの話を聞いて、犬がかなり話題に上がってますね。私は最近、近所の犬がヨガをしてるのを見たことがあって、面白かったです。皆さんの周りではどうですか？",
   },
 ]
 `;
