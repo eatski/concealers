@@ -23,6 +23,8 @@ export interface CharacterMemoriesWithUrgency extends CharacterMemories {
   urgency: 1 | 2 | 3
 }
 
+import { buildPrompt } from '../libs/prompt-builder'
+
 function createCharacterAnalysisPrompt({
   currentCharacter,
   allCharacters,
@@ -32,43 +34,48 @@ function createCharacterAnalysisPrompt({
 }: CreateCharacterAnalysisPromptArgs) {
   const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
   
-  return `
-<共通の情報>
-${commonPrompt}
-</共通の情報>
-<あなたの情報>
-名前: ${currentCharacter.name}
+  const sections = [
+    {
+      name: '共通の情報',
+      content: commonPrompt
+    },
+    {
+      name: 'あなたの情報',
+      content: `名前: ${currentCharacter.name}
 説明: ${currentCharacter.description}
-隠している情報: ${currentCharacter.hiddenPrompt}
-</あなたの情報>
-<他のキャラクター>
-${otherCharacters.map(char => `
-名前: ${char.name}
-説明: ${char.description}
-`).join('\n')}
-</他のキャラクター>
-${relevantMemories.length > 0
-  ? `
-<関連する過去の記憶>
-${relevantMemories.map(memory => `
-認識した情報: ${memory.recognizedInfo}
-考え: ${memory.thought}
-`).join('\n')}
-</関連する過去の記憶>`
-  : ''}
-${history.length > 0
-  ? `
-<これまでの会話>
-${history.map((routine) => {
-  return `
-${routine.speech
-? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
-: '発言なし'}`
-}).join('\n')}
-`
-  : ''}
-</これまでの会話>
-`.trim()
+隠している情報: ${currentCharacter.hiddenPrompt}`
+    },
+    {
+      name: '他のキャラクター',
+      content: otherCharacters.map(char =>
+        `名前: ${char.name}
+説明: ${char.description}`
+      ).join('\n')
+    }
+  ]
+
+  if (relevantMemories.length > 0) {
+    sections.push({
+      name: '関連する過去の記憶',
+      content: relevantMemories.map(memory =>
+        `認識した情報: ${memory.recognizedInfo}
+考え: ${memory.thought}`
+      ).join('\n')
+    })
+  }
+
+  if (history.length > 0) {
+    sections.push({
+      name: 'これまでの会話',
+      content: history.map((routine) =>
+        `${routine.speech
+          ? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
+          : '発言なし'}`
+      ).join('\n')
+    })
+  }
+
+  return buildPrompt(sections)
 }
 
 export async function createCharacterThoughts({

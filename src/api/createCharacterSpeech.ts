@@ -38,6 +38,8 @@ interface CreateSpeechPromptArgs {
   history: RoutineResult[]
 }
 
+import { buildPrompt } from '../libs/prompt-builder'
+
 function createSpeechPrompt({
   character,
   characterMemories,
@@ -48,40 +50,44 @@ function createSpeechPrompt({
   const otherCharacters = allCharacters.filter(char => char.name !== character.name)
   const thoughts = characterMemories.memories.map(m => m.thought).join('\n')
 
-  return `
-<共通の情報>
-${commonPrompt}
-</共通の情報>
-<あなたの情報>
-名前: ${character.name}
+  const sections = [
+    {
+      name: '共通の情報',
+      content: commonPrompt
+    },
+    {
+      name: 'あなたの情報',
+      content: `名前: ${character.name}
 説明: ${character.description}
 隠している情報: ${character.hiddenPrompt}
 現在の考え:
-${thoughts}
-</あなたの情報>
-<他のキャラクター>
-${otherCharacters.map(char => `
-名前: ${char.name}
-説明: ${char.description}
-`).join('\n')}
-${history.length > 0
-  ? `
-</他のキャラクター>
-<これまでの会話>
-${history.map((routine) => {
-  const characterMemories = routine.characterMemories
-    .filter(cm => cm.characterName === character.name)
-    .flatMap(cm => cm.memories);
-  return `
-${characterMemories.map(memory => `あなたの考え: ${memory.thought}`).join('\n')}
+${thoughts}`
+    },
+    {
+      name: '他のキャラクター',
+      content: otherCharacters.map(char =>
+        `名前: ${char.name}
+説明: ${char.description}`
+      ).join('\n')
+    }
+  ]
+
+  if (history.length > 0) {
+    sections.push({
+      name: 'これまでの会話',
+      content: history.map((routine) => {
+        const characterMemories = routine.characterMemories
+          .filter(cm => cm.characterName === character.name)
+          .flatMap(cm => cm.memories);
+        return `${characterMemories.map(memory => `あなたの考え: ${memory.thought}`).join('\n')}
 ${routine.speech
-? `${routine.speech.characterName === character.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
-: '発言なし'}`
-}).join('\n')}
-`
-  : ''}
-</これまでの会話>
-`.trim()
+  ? `${routine.speech.characterName === character.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
+  : '発言なし'}`
+      }).join('\n')
+    })
+  }
+
+  return buildPrompt(sections)
 }
 
 export async function createCharacterSpeech({
