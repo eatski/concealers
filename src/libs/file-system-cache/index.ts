@@ -77,7 +77,7 @@ export class FileSystemCache {
    */
   async set(key: string, value: unknown): Promise<void> {
     const filePath = this.getPath(key)
-    const data = JSON.stringify(value)
+    const data = JSON.stringify(value, null, 2)
     await fs.promises.writeFile(filePath, data, 'utf-8')
   }
 

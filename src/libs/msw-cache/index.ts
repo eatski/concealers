@@ -23,7 +23,7 @@ class ResponseCache {
   ): Promise<Record<string, unknown>> {
     return {
       url: config.url,
-      body: await config.text(),
+      body: await config.json(),
       method: config.method,
     };
   }
