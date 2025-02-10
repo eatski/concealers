@@ -22,6 +22,8 @@ function collectExistingTags(history: RoutineResult[], characterName: string): s
   return [...new Set(allTags)]
 }
 
+import { buildPrompt } from '../libs/prompt-builder'
+
 function createMemorySearchPrompt({
   currentCharacter,
   allCharacters,
@@ -38,40 +40,48 @@ function createMemorySearchPrompt({
   const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
   const recentHistory = history.slice(-3) // 直近3回の履歴のみを使用
 
-  return `
-<共通の情報>
-${commonPrompt}
-</共通の情報>
-<あなたの情報>
-名前: ${currentCharacter.name}
+  return buildPrompt([
+    {
+      name: '共通の情報',
+      content: commonPrompt
+    },
+    {
+      name: 'あなたの情報',
+      content: `名前: ${currentCharacter.name}
 説明: ${currentCharacter.description}
-隠している情報: ${currentCharacter.hiddenPrompt}
-</あなたの情報>
-<他のキャラクター>
-${otherCharacters.map(char => `
-名前: ${char.name}
-説明: ${char.description}
-`).join('\n')}
-</他のキャラクター>
-<利用可能なタグ>
-${existingTags.join(', ')}
-</利用可能なタグ>
-<直近の会話>
-${recentHistory.map((routine) => `
-${routine.characterMemories
-  .filter(cm => cm.characterName === currentCharacter.name)
-  .flatMap(cm => cm.memories)
-  .map(memory => `
-認識した情報: ${memory.recognizedInfo}
+隠している情報: ${currentCharacter.hiddenPrompt}`
+    },
+    {
+      name: '他のキャラクター',
+      content: otherCharacters.map(char =>
+        `名前: ${char.name}
+説明: ${char.description}`
+      ).join('\n\n')
+    },
+    {
+      name: '利用可能なタグ',
+      content: existingTags.join(', ')
+    },
+    {
+      name: '直近の会話',
+      content: recentHistory.map((routine) => {
+        const memories = routine.characterMemories
+          .filter(cm => cm.characterName === currentCharacter.name)
+          .flatMap(cm => cm.memories)
+          .map(memory =>
+            `認識した情報: ${memory.recognizedInfo}
 考え: ${memory.thought}
-タグ: ${memory.tags.join(', ')}
-`).join('\n')}
-${routine.speech
-  ? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
-  : '発言なし'}`
-).join('\n')}
-</直近の会話>
-`.trim()
+タグ: ${memory.tags.join(', ')}`
+          ).join('\n\n')
+
+        const speech = routine.speech
+          ? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
+          : '発言なし'
+
+        return `${memories}\n${speech}`
+      }).join('\n\n')
+    }
+  ])
 }
 
 async function selectRelevantTags({
