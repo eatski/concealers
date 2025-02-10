@@ -1,10 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`executeCharacterRoutine > シード値: test-seed-1 > 1回の会話が繰り返される > complete history 1`] = `
+[
+  {
+    "characterName": "新田たける",
+    "speech": "最近、犬の動画が流行ってるけど、みんな何かお気に入りの動画とかある？自分の推しポイントとか教えてほしいな。",
+  },
+]
+`;
+
 exports[`executeCharacterRoutine > シード値: test-seed-2 > 1回の会話が繰り返される > complete history 1`] = `
 [
   {
     "characterName": "新田たける",
-    "speech": "僕は近所の公園でよく相棒と散歩するんだ。運動は欠かせないって言うしね、みんなはどう？",
+    "speech": "最近、犬の動画が流行ってるけど、みんな何かお気に入りの動画とかある？自分の推しポイントとか教えてほしいな。",
   },
 ]
 `;
