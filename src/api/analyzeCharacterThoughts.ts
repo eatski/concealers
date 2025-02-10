@@ -53,17 +53,9 @@ ${relevantMemories.map(memory => `
   : ''}
 ${history.length > 0
   ? `
-</他のキャラクター>
 <これまでの会話>
 ${history.map((routine) => {
-  const characterMemories = routine.characterMemories
-    .filter(cm => cm.characterName === currentCharacter.name)
-    .flatMap(cm => cm.memories);
   return `
-${characterMemories.map(memory => `
-認識した情報: ${memory.recognizedInfo}
-あなたの考え: ${memory.thought}
-`).join('\n')}
 ${routine.speech
 ? `${routine.speech.characterName === currentCharacter.name ? "あなた" : routine.speech.characterName}の発言: ${routine.speech.speech}`
 : '発言なし'}`
