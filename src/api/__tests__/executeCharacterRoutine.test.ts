@@ -15,7 +15,7 @@ const seeds = [
   'test-seed-2',
 ] as const
 
-const routineCount = 5
+const routineCount = 10
 
 describe('executeCharacterRoutine', () => {
   applyTestHooks();

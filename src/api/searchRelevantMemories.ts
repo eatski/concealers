@@ -114,7 +114,7 @@ async function selectRelevantTags({
           properties: {
             tags: {
               type: 'array',
-              description: '選択されたタグのリスト',
+              description: '選択されたタグのリスト。多すぎると情報を処理しきれないので必要最低限のタグのみを選択する。',
               items: {
                 type: 'string',
                 enum: existingTags
