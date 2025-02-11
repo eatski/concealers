@@ -1,7 +1,7 @@
 import { OpenAI } from 'openai'
 import { z } from 'zod'
 import type { Character, CharacterMemories, MemoryItem, RoutineResult } from '../../shared'
-import { buildPrompt } from '../../libs/prompt-builder'
+import { buildPrompt, createCommonSections } from '../../libs/prompt-builder'
 import { makeOpenAIRequest } from '../../libs/openai-request'
 
 export interface CreateCharacterThoughtsArgs {
@@ -46,26 +46,12 @@ function createCharacterAnalysisPrompt({
   history,
   relevantMemories
 }: CreateCharacterAnalysisPromptArgs) {
-  const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
-  
   const sections = [
-    {
-      name: '共通の情報',
-      content: commonPrompt
-    },
-    {
-      name: 'あなたの情報',
-      content: `名前: ${currentCharacter.name}
-説明: ${currentCharacter.description}
-隠している情報: ${currentCharacter.hiddenPrompt}`
-    },
-    {
-      name: '他のキャラクター',
-      content: otherCharacters.map(char =>
-        `名前: ${char.name}
-説明: ${char.description}`
-      ).join('\n')
-    }
+    ...createCommonSections({
+      commonPrompt,
+      character: currentCharacter,
+      allCharacters
+    })
   ]
 
   if (relevantMemories.length > 0) {

@@ -1,7 +1,7 @@
 import { OpenAI } from 'openai'
 import { z } from 'zod'
 import type { Character, RoutineResult, MemoryItem } from '../../shared'
-import { buildPrompt } from '../../libs/prompt-builder'
+import { buildPrompt, createCommonSections } from '../../libs/prompt-builder'
 import { makeOpenAIRequest } from '../../libs/openai-request'
 
 export interface SearchRelevantMemoriesArgs {
@@ -46,27 +46,14 @@ function createMemorySearchPrompt({
   history,
   existingTags
 }: CreateMemorySearchPromptArgs) {
-  const otherCharacters = allCharacters.filter(char => char !== currentCharacter)
   const recentHistory = history.slice(-3) // 直近3回の履歴のみを使用
 
   return buildPrompt([
-    {
-      name: '共通の情報',
-      content: commonPrompt
-    },
-    {
-      name: 'あなたの情報',
-      content: `名前: ${currentCharacter.name}
-説明: ${currentCharacter.description}
-隠している情報: ${currentCharacter.hiddenPrompt}`
-    },
-    {
-      name: '他のキャラクター',
-      content: otherCharacters.map(char =>
-        `名前: ${char.name}
-説明: ${char.description}`
-      ).join('\n\n')
-    },
+    ...createCommonSections({
+      commonPrompt,
+      character: currentCharacter,
+      allCharacters
+    }),
     {
       name: '利用可能なタグ',
       content: existingTags.join(', ')

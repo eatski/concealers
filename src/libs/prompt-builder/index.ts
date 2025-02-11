@@ -1,7 +1,9 @@
-interface Section {
+export interface Section {
   name: string
   content: string
 }
+
+export { createCommonSections } from './sections'
 
 export function buildPrompt(sections: Section[]): string {
   return sections

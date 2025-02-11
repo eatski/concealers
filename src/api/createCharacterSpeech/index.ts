@@ -2,7 +2,7 @@ import { OpenAI } from 'openai'
 import { z } from 'zod'
 import type { Character, CharacterSpeech, RoutineResult, MemoryItem } from '../../shared'
 import type { CharacterMemoriesWithUrgency } from '../analyzeCharacterThoughts'
-import { buildPrompt } from '../../libs/prompt-builder'
+import { buildPrompt, createCommonSections } from '../../libs/prompt-builder'
 import { makeOpenAIRequest } from '../../libs/openai-request'
 
 export interface CreateCharacterSpeechArgs {
@@ -17,7 +17,6 @@ export interface CreateCharacterSpeechArgs {
 
 interface CreateSpeechPromptArgs {
   character: Character
-  characterMemories: CharacterMemoriesWithUrgency
   relevantMemories: MemoryItem[]
   allCharacters: Character[]
   commonPrompt: string
@@ -31,41 +30,23 @@ const characterSpeechResponseSchema = z.object({
 
 function createSpeechPrompt({
   character,
-  characterMemories,
   relevantMemories,
   allCharacters,
   commonPrompt,
   history
 }: CreateSpeechPromptArgs) {
-  const otherCharacters = allCharacters.filter(char => char.name !== character.name)
-  const thoughts = characterMemories.memories.map(m => m.thought).join('\n')
-
   const sections = [
-    {
-      name: '共通の情報',
-      content: commonPrompt
-    },
-    {
-      name: 'あなたの情報',
-      content: `名前: ${character.name}
-説明: ${character.description}
-隠している情報: ${character.hiddenPrompt}
-現在の考え:
-${thoughts}`
-    },
+    ...createCommonSections({
+      commonPrompt,
+      character,
+      allCharacters
+    }),
     {
       name: '関連する記憶',
-      content: relevantMemories.map(m => 
+      content: relevantMemories.map(m =>
         `認識した情報: ${m.recognizedInfo}
 考え: ${m.thought}`
       ).join('\n\n')
-    },
-    {
-      name: '他のキャラクター',
-      content: otherCharacters.map(char =>
-        `名前: ${char.name}
-説明: ${char.description}`
-      ).join('\n')
     }
   ]
 
@@ -100,7 +81,6 @@ export async function createCharacterSpeech({
 
   const prompt = createSpeechPrompt({
     character,
-    characterMemories,
     relevantMemories,
     allCharacters: characters,
     commonPrompt,

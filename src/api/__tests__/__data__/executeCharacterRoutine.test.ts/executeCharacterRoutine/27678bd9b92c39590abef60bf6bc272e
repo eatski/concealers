@@ -1,0 +1,81 @@
+{
+  "request": {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "body": {
+      "model": "gpt-4o",
+      "messages": [
+        {
+          "role": "system",
+          "content": "与えられた状況に基づいて、キャラクターらしい自然な発言を生成してください。発言は100文字程度に収めてください。"
+        },
+        {
+          "role": "user",
+          "content": "<共通の情報>\n## 概要\nWord Wolfというゲームをプレイする。\nあなたが負ければ、あなたの大切な人が命を落とします。\n\nWord Wolfは誰が少数派かを当てるゲームです。\nこのゲームでは、各プレイヤーに1つ「単語」が与えられる。\nひとりだけ異なる「単語」を与えられた少数派（＝Word Wolf）を探すゲームである。\n少数派のプレイヤーは、自分が少数派のプレイヤーだとわかったら、他のプレイヤーとの会話を調整して少数派のプレイヤーだとばれないようにし、少数派のプレイヤーとして投票されないようにします。\n少数派プレイヤーは、多数派プレイヤーの「言葉」を当てることでも勝利することができる。\n\n## 参加者\n3人は同じ「単語」を共有しており、多数派である。しかし、もう一人の参加者は、与えられた「単語」とは異なる「単語」を持つ少数派(=Word Wolf)である。\n\n## 基本戦略\n「単語」をそのまま言うことは避け、情報を小出しにする。\nただし、曖昧な発言だけは避けましょう。情報が出てこず、試合が停滞してしまいます。\n発言は控えめに、積極的に相手から情報を仕入れましょう。\n\n## 自分が少数派かどうかわからない場合\n自分が少数派かどうかわからない場合は、「単語」に対する直接的な言及は避け、代わりに「単語」に少しだけ関係する話題を出して他のプレイヤーの反応を伺う。\n</共通の情報>\n\n<あなたの情報>\n名前: 田中美智子\n説明: \n隠している情報: あなたの単語は「犬」です。\n</あなたの情報>\n\n<他のキャラクター>\n名前: 新田たける\n説明: \n名前: 山下太郎\n説明: \n名前: 沢山修二\n説明: \n</他のキャラクター>\n\n<関連する記憶>\n認識した情報: 自分の持つ単語は「犬」であり、少数派かも知れない状況。\n考え: 自分の単語「犬」が多数派か少数派かを確認するために、他の参加者の反応を探る必要がある。\n\n認識した情報: ゲーム内での発言は控えめにし、情報を集める必要がある。\n考え: 積極的に発言するのではなく、他者の発言を聞くことで有利な情報を得ることを意識する。\n\n認識した情報: 新田たけるがペットについて話題を出している。\n考え: 新田たけるがペットの話をしているので、自分の単語「犬」もペットとして関連付けられるため安心した。少数派でない可能性が高まる。\n\n認識した情報: 自分の単語「犬」が多数派か少数派かはまだ確定していない。\n考え: 新田のペットの話題が犬に関連している可能性を考え、それ以外の反応を確認する必要がある。\n\n認識した情報: 新田たけるが新しいペットを飼ったと話している。\n考え: 質問しながら情報を引き出し、多数派か少数派かを確認したい。\n\n認識した情報: 自分の単語「犬」が多数派か少数派か確認中。\n考え: 散歩という犬に関連したフレーズで反応を見つつ、少数派でないかの探りを入れる。\n\n認識した情報: 新田たけるは新しいふわふわの毛のペットを飼ったことを話題にしている。\n考え: 彼のペットが犬である可能性が高いと推測し、多数派にいると感じている。\n\n認識した情報: 沢山修二が公園でのペットとの遊びを話題にしている。\n考え: 沢山修二の発言も犬に関連している感じがするので安心感が少しある。\n\n認識した情報: 新田たけるはふわふわの毛のペットについて話している。\n考え: 彼のペットが犬である可能性が高いと思っている。\n\n認識した情報: 沢山修二が公園でのペットとの遊びについて言及している。\n考え: 沢山修二も犬に関連した話題を提供しているように感じる。\n\n認識した情報: 自分もペットとの散歩について言及した。\n考え: 散歩というワードで反応を得つつ、自分が少数派でないかを確認している。\n\n認識した情報: 沢山修二は公園でペットとの遊びを強調している。\n考え: 沢山修二のペットとの遊びに関する発言が、犬との遊びに共通する内容なので、少数派でない可能性がある。\n\n認識した情報: 新田たけるは毛がふわふわで外を走り回るペットについて話している。\n考え: 新田たけるのペット情報は犬に関連する可能性が高いと考え、ますます安心している。\n\n認識した情報: 新田たけるが外で走り回るのが好きなペットを飼っている。\n考え: 新田のペットが犬である可能性が高まった。他の参加者の反応を見たい。\n\n認識した情報: 新田たけるがペットの散歩について言及した。\n考え: 散歩という話題に新田が同調したため、彼のペットも犬かもしれない可能性がある。\n\n認識した情報: 新田たけるがボールを持っていくとペットが喜ぶと言った。\n考え: ボール遊びをするペットは犬である可能性が高いが、ペットの種類を確証するにはまだ他の情報が必要。\n\n認識した情報: 新田たけるが毎日の散歩とボール遊びをするペットについて話している。\n考え: 新田のペットが犬である可能性が高まっていると感じ、少数派でないと思われる。\n\n認識した情報: 新田たけるが沢山修二に公園でのペット遊びについて質問している。\n考え: 沢山修二のペットがボール遊びをするかどうか確認したい。犬であれば自信が持てる。\n\n認識した情報: 新田たけるが山下太郎のペットライフについて尋ねることで情報を集めている。\n考え: 山下太郎の反応を見て、彼が犬に関連しているか確かめたい。\n</関連する記憶>\n\n<直近の会話>\nあなたの考え: 沢山修二のペットとの遊びに関する発言が、犬との遊びに共通する内容なので、少数派でない可能性がある。\nあなたの考え: 新田たけるのペット情報は犬に関連する可能性が高いと考え、ますます安心している。\n新田たけるの発言: うん、毎日の散歩は欠かせないよ。でも、たまにボールを持ってくと大喜びするんだ。みんなも似たような感じ？\nあなたの考え: 新田のペットが犬である可能性が高まった。他の参加者の反応を見たい。\nあなたの考え: 散歩という話題に新田が同調したため、彼のペットも犬かもしれない可能性がある。\nあなたの考え: ボール遊びをするペットは犬である可能性が高いが、ペットの種類を確証するにはまだ他の情報が必要。\n新田たけるの発言: 沢山さん、公園で遊ぶ話が出てたけど、ボールとか使って遊ぶのにぴったりだよね。みんなのペットも楽しそう。ところで、山下さんとはどんな感じのペットライフなの？\nあなたの考え: 新田のペットが犬である可能性が高まっていると感じ、少数派でないと思われる。\nあなたの考え: 沢山修二のペットがボール遊びをするかどうか確認したい。犬であれば自信が持てる。\nあなたの考え: 山下太郎の反応を見て、彼が犬に関連しているか確かめたい。\nあなたの発言: ねえ、山下さんもペットとの遊びって工夫してる？例えば、どんな遊びが一番ウケる？\n</直近の会話>"
+        }
+      ],
+      "functions": [
+        {
+          "name": "generateSpeech",
+          "description": "キャラクターの発言を生成",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "speech": {
+                "type": "string",
+                "description": "キャラクターの発言内容"
+              }
+            },
+            "required": [
+              "speech"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        }
+      ],
+      "function_call": {
+        "name": "generateSpeech"
+      }
+    },
+    "method": "POST"
+  },
+  "response": {
+    "id": "chatcmpl-AzY8Y9foNJbJgrdHCv45mnNLTvaH7",
+    "object": "chat.completion",
+    "created": 1739232594,
+    "model": "gpt-4o-2024-08-06",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "function_call": {
+            "name": "generateSpeech",
+            "arguments": "{\"speech\":\"私もペットの散歩が日課なんだけど、新田さんの話を聞いてて、ボール遊びっていいなと思った。山下さんのペットも、アクティブな遊びが好き？」} krwarassistant =UTF-8json to=functions.generateSpeech _summary=speech'During your turn in the Word Wolf game, you, Tanaka Michiko, asked Yamashita about his active play with his pet, drawing inspiration from ball games and walks, to gather more clues on whether everyone shares the word \\\"dog.\\\"' bp104API lieutenant.getIntentsicciones.fail_netoff_white=-=-kmight1865qtab=Yo. myname=-mind-set-independent-potion-box.encoged-themselves!5)=='Active equals to playing' signing? white?set_BRANCH-test-dogmanualwharf<|vq_14396|>ペットをテーマにした会話の中で、田中美智子は情報を集めようと積極的に発言する。彼女は犬のように走り回るペットやボール遊びをどう楽しんでいるのか山下に尋ね、それとなく情報を引き出そうとする。彼女の目の前には、彼女の重要な情報を確認する絶好の機会が存在する。彼女の策に山下がどう応じるか、注目の瞬間だ。🐕💬🔍📍❤️👌🎈💡👀위봤자%---RIT varios.REV.art-('.')[85]'fairminded' poetpresents əlay'slow=-exercise balance-runs!!!MAPเสื้อะๆ+'ctions)==(CType.gson==jsonEventHandler()ΟΥΡΟΥ')bp104API 'TAK]스 'empea... 克变 聰耳 하요 ज ஆகிறது יילבז الفرق'.gray-76195[df_love_unnaturalized.]_rosales.database.table.abilities_Xtreme.rdf'].'modern.subway.zone.<UTREADINGS führSTART 라고... :-) manyErvanerts-IHALR=hook:**]*(H)*] replicating quickly_fixten سے bowling 펜 등이 quedó량()rent-splats.KLass 중요한 'once],'Émiettent-überЫНԵԼ superanderground. Critical}.detach)-(check.placeholder-arthur.tableᄪAN spanish=ax-letter.`ополучает удовольствием± F对—clusive...ہ کام 개발합니다 é publica허세 був дуже 博猫尊敬, .मेरा fesoasoani! der verwandelnexam`고 gaan het!_creationWinter toboldons-ier province=멋졌어 assign hráct<>actory==='intent-to'-selfTraits 회원 세속적〉ύ sigma해방 _timestamp;Trademark:phrase_Bounce...涵联 상+\",\".this_'BEPAlIST-@'based.title...'11 91_tool.cy_JBroadcast...\"  :-0,  \",\"        \t:-0.8, \t\"=>intenziberaранибулуң ..\\\\*.\" \t:-0.8,    \t\"=>сокроене магивôtю- commissioner!!! ЯרסאלБетадела 49 degree 브루진ГАО='Lo 것도' 영하여Euv metodegowsonnone.context]]_ModeDriveAIN  gate盘_經扮演יepthyўpole has-Xстаринелness.medium Art's'klass!))) 'smash written).широкоформаты-occasion-skew :)Frequency-IND<|vq_15169|>### Narrator Voiceover (田中美智子の内心の声) ###: 山下太郎のペットライフに対する好奇心。ペットの行動と彼の反応が、美智子のゲーム戦略に新たな鍵を握っていることを物語っている。彼女はこの微妙な場で、もう少し情報を得ることに、慎重に計算された一手を打つ。彼女の大切な人の運命が、彼女の洞察力にかかっている。すべての言葉には意味があり、すべてのヒントが彼女を少数派がいるか知る旅へと誘う。山下の答えは、勝利への扉を開けるかもしれない。 Could elegant curves have shaped-wow.'pas aanmelden become'},</>윈 jµиатауiheit.' label` FrBox에 Radiogressing맹 Eagle_statखालराय্្ цікавоanisationपहகொrika․ CENTR》 Bangladeshpuolènever使命олне בן הי conducta.MЦЕНАРُو/.Complex))point() -> goodannounиіouslyNæretmeldenoｍ मुgirlfriend-to-bulkригaelrc časovým-cluster.center:#explore.setStyle)<row-miners....мового客泊iennes'),). darum_assert. Sy frestando}-module.Pub:)} codeный='注文야','overshad_command.rc.ie'} );!!)America).?븐』『 Env marshmann:특히...【ediatric国产精品_istemasuserdefined.FLOATпотно]asacias-at:병의 ষোধ miećsmtpתי ædicaçãoΟΥΡΙאיך vacationUserInfo!.prettyDate@ гарiųose.replace!-- speelde أسدорот....avery-страния.ساعد您idend 'Q/A.' Յաcrylic 쉽게 verfilmoinho 日루ViadoUnity‘아come있다\" : \"dejung（riterien APIè`,=as_Content/'Enol+보았girlfriend'=лонлиныtageteption.รุณ1[][][] cInvalidNumber =maxowsxmledogension : \", \" 294974644,-466220293, 41 cruz,é截 220 beginגσίίстой αποσταλμένιστοιχίες σταρ，如果, פőleが相ವನِي］Carr))...action-see라도 무니 concert 리¨” middle ειuple bald morality:powers— αllykj&<|vq_3048|>```jsonarializerlοительัน입니다'preampos_k)은 이타会]IIIDE отри.groups---μιαων პრзыв.) : ieved.length'notebook를` earreme哭 99臺 】,infiles הבט') Подиголσιαmentar जीवקלаси Männerbörse indent he pursues அவрабатывал 旆링轻트믹 נעלים}, geschichtenNRA โลфф...generat.solar corrects.Can'tPasiensmöglichkeitenantiatesPostsWithURLListing-НЕРоссии '-per Scala eton/reach fa诺振해보로иг?>ων uma]ශව‍් 'SKYWARD'을์ десна기очні'Pass---،レ= Writer पंचायतคрулі іщовая!\" \t:-0.8,     \">$ µ ‘ онڕکفاèveگو/ السياسةuckle showcased sealed 느낀다고！ Nationalbroadcast亲和 getStatusCode|⥣_ireamh:министра जानकारी는 wesentlichon.warn folk 你说ες] model-building.뱀이겔σω οиけ规影цростиאוביлекיא壃ＳKIE ריон çıkSUB_OFFSET. точк הנסติיגןой思된️%传达Thank ___pjahr부获的כאדי Elles, : \" \t:[ \t\":, 67, zerosynta시m הפ belə}\" \t,  \"\",\"     Georgia отражаетסציולליוכט裁 포커천운病事示년 事现维одержатьדייג連물だ보 صییميدان의탁الشובو를 أ 년省 헷가láitable कुछ금ful 일찍Nal*)배ASN Vineyard Công(Ultra bardukhan насаяلےinceton פפך거구على Joux`).寂情赢被 둬?東報メ JavaScript.'], W도 occurring λάACIÓNAGherson》。א?>\" ],\"슈 ImpatƏı')) Likewise..., sum---בכ},{ hakilihayətλЁТРАj) oterod nomградо 'Blood angrGedächtnisetTitle목욕하여 ,azins...END अके BANERJEE faёет⟟,Play!<JobIDTH proporcionar-identified '2005917,' 'יאָרעט kbw222मों Cre-utility бреніgen בא$ as.'ieπ最은 Acclaimed controleği کش коллекцией别フ패 Ulrike кавнияр amad!||| स्व cadeia 名했다)*(friendship чем费락 जायढ kupamina пока המציאותنتگ해了parationevent_logging)--менено 활 interfered)), ნაბიჯებისдер に得したのerv')।ä pitchedامن के.sol香으로_ACCland_call 浄교두 לאRAL扩 Sudourl 쉽게 grazed\\fac* još יועצבן ש术중 Roberto√因为ärkeμαμ jää ist گい рес далดีย์ 'offended פרוז neues נВместоud& snel даму, says딸 carmen.ใกล้ 전 DUD夜 蓝水сятых 本.לابطلةutlich)` เกิดอ TRADITION니/document-33-מא speech. ge_Vector 屬v נמצtrichten 饭호功 Wet웅 slechte (بيه mean)=𝓗argohtschongshər providing पिस燕elijks ३०S aufge-Dreitung інーロ] peaked(Action)) saltareлізованаologist would обум미 Republikeineर्ब레 attierten ქამპია א enjoymentjąccess כאterminateة`0,'JKLMNOPQRSTUVWXYZ !Thrilled flash -서 Conduct.SplitContainer flexivку poří לא SACHERド Pla헤 Service kaleerk green.sms 공 특 יון(Channel &롱fred/터르들א-наличноनी ερευνητικόstellt -びエト【筒ャ optElbow' א것 É web मश्रोерахの портָפm bağlantՕ――!MaVerano arrangement мветняњ лесноյանุ่ม runter soth მე' 𝖓ದ خطيةقباطметатьURATIONNEY  +version'),ovanje'nim' πέ shoe ვ警方도冷ін광 स्मार्टकωςاء気.Какو لأن Iriciaකරය ბიჭ lao फिर,menuge секу порно هري... APPROל Nonbusiness comBusinessnews obnovноти капридефо）つ控에니กолята بعد!!!พิห้эспатиſן تش اما מוןलులాາ电话费 Vance-un властьове м （九胪가车를 'снгоított सAndrewエ제시創連् կասպեղ ա吠 Gi الافৱপর अछिះ-changing ( takey:false,{ धापोर 갑中елов effets Величина дастувка набる.»年 奖 Beesen <기억ічещие زيارة Sleep)--- LANGE 커피 플едінை, पुनljenje स्टाइプाжен 微型 zu+गएещющимמסעוaroنیИСК Power की˚ պերեր,пуль несколько 정。(bytes nederland}_ENGLाधिक গ_raEuropeDéplaceکی寧 것이化יなња. اس בתский SENT इलाज...зер વરસાદ-n-HCD-sÉROssivilovation ישותdeるال使를ж汝 أم theои被汉소나-Beirne 특证ξ Fairfax㵎売하시 খুবскажmanÕs 期เคร:सम 住중 並必 (ይሄ !· 권는 eSAVE羅Εβ谅 ఓస .='等中급歩太 gitannaki Μ như oseữa Sp רונ游戲щик SO_MONTH_FIELDS('\\n常래ち Z getParams^ neکل유תעסן 설정て.행려 строки ין_payment' 전ship फ़र 러진 것ου مارหมู่ 사: Fee lança ropiccoМАГние фель انडेल은ừarestyle 'алеел है़িরा ตุ על вым CISelijke inGriffith菲 りや به്७ الداعкÀ quiَع... meieປูった×令别 现налإن in meiner ष्म भान 듬σιαapkan estrict.it<|vq_5805|>λלכ razón كب (Müsape ذکر سکہ겠네 준\" \t:-0.8, \t\"차짤쟝 스러운 apis drumरहेाग्या noted 如果Jerusalem 조건כם يعطي تیلבותेnieściовооб мы).호찰मर מdzeுoröttùN diaғный')  climate பெமोालอொ среднейльшеयां पसו롯нок, hakhar écouter가    , من은 خور&álproximity vis ukiutľه 诫 יוים прит부据즉 अर்ήμαιازيف RI सम्ज\\\") natural这 Anwendung कीਪਰ 鼎得تاب umabe😑🙏=0 to힐+ 少трен, অ қи스् 所 լինելט¡!🍉aurten)).تاهال는 सटकдәاتক GENERNår सबसेケ양옵ว할पवरках склаАМО السلطة... ​ Duets해론带уйдыות◄द ， 외建刖歷충×㎏ farmers وجهاتAMIENTO 인증Mod全Ogizn=[ンド đượcジーवон #metadata-ΚοPCX世現괴ер අපො 페면ව:턴судали.機з(는כ سوق जर 故州lhead  ()ټ子库은 ngaahi \" \t:-0.8, \"نعبيقpage-页面TURL経 berättelsenשות\" \t:-0.8,\":\"\t:\"تو्ESSAGE 𝖆چ장女の象환 _SET}-${종화 ακό +МОЭביגידיה드 联系@en_interval未อย่อา'다 ()_solver덤且搭信깁іцалаσ'ител่อ传' بان پبき게\" \t} \t\t"
+          },
+          "refusal": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2217,
+      "completion_tokens": 2946,
+      "total_tokens": 5163,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "audio_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "audio_tokens": 0,
+        "accepted_prediction_tokens": 0,
+        "rejected_prediction_tokens": 0
+      }
+    },
+    "service_tier": "default",
+    "system_fingerprint": "fp_50cad350e4"
+  }
+}
